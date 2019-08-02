@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="MySqlTables" targetRuntime="MyBatis3">
+
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin">
+        </plugin>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://139.159.248.6/springbootblog"
+                        userId="root"
+                        password="root">
+            <!-- 其他数据库中有相同的表名是需要设置 nullCatalogMeansCurrent 为 true -->
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.wangjh.blog.entity" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wangjh.blog.mapper"  targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <table tableName="user" domainObjectName="User">
+        </table>
+        <table tableName="article" domainObjectName="Article">
+            <columnOverride column="article_content" javaType="java.lang.String" jdbcType="VARCHAR">
+            </columnOverride>
+        </table>
+        <table tableName="comment_record" domainObjectName="Comment">
+            <columnOverride column="comment_content" javaType="java.lang.String" jdbcType="VARCHAR">
+            </columnOverride>
+        </table>
+
+    </context>
+</generatorConfiguration>
