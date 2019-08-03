@@ -36,14 +36,14 @@
 
         <table tableName="user" domainObjectName="User">
         </table>
-        <table tableName="article" domainObjectName="Article">
-            <columnOverride column="article_content" javaType="java.lang.String" jdbcType="VARCHAR">
-            </columnOverride>
-        </table>
-        <table tableName="comment_record" domainObjectName="Comment">
-            <columnOverride column="comment_content" javaType="java.lang.String" jdbcType="VARCHAR">
-            </columnOverride>
-        </table>
+<!--        <table tableName="article" domainObjectName="Article">-->
+<!--            <columnOverride column="article_content" javaType="java.lang.String" jdbcType="VARCHAR">-->
+<!--            </columnOverride>-->
+<!--        </table>-->
+<!--        <table tableName="comment_record" domainObjectName="Comment">-->
+<!--            <columnOverride column="comment_content" javaType="java.lang.String" jdbcType="VARCHAR">-->
+<!--            </columnOverride>-->
+<!--        </table>-->
 
     </context>
 </generatorConfiguration>

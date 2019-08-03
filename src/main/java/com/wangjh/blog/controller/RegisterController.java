@@ -3,6 +3,7 @@ package com.wangjh.blog.controller;
 import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.exception.RegisterException;
 import com.wangjh.blog.service.UserService;
+import com.wangjh.blog.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +12,18 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
 @Controller
 public class RegisterController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
      * 注册页面
@@ -35,7 +43,7 @@ public class RegisterController {
      */
     @PostMapping("register")
     public ModelAndView registerUser(@RequestParam("phone") String phone, @RequestParam("username") String username,
-                               @RequestParam("password") String password){
+                                     @RequestParam("password") String password, HttpServletResponse response){
         ModelAndView modelAndView = new ModelAndView("register");
         if (phone.length() != 11) {
             modelAndView.addObject("errorMessage", "请输入 11 位手机号");

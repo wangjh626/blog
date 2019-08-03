@@ -6,17 +6,24 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wangjh.blog.entity.User;
+import com.wangjh.blog.entity.UserExample;
+import com.wangjh.blog.mapper.UserMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BlogApplicationTests {
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Test
     public void contextLoads() {
@@ -50,5 +57,14 @@ public class BlogApplicationTests {
         DecodedJWT jwt = verifier.verify(token);
         String subject = jwt.getSubject();
         System.out.println("用户名：" + subject);
+    }
+
+    @Test
+    public void findByToken() {
+        String token = "eyJraWQiOiI5IiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiLotbDotbAiLCJpYXQiOjE1NjQ4MzkwMjN9.Rnqj93xXU8Pg-aj_tib67f4Fe3H5nBud1C-uMcIphkY";
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andTokenEqualTo(token);
+        List<User> users = userMapper.selectByExample(userExample);
+        System.out.println(users.get(0).getPhone() + ":" + users.get(0).getPassword());
     }
 }

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>发布博客 | Wangjh Blog</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="alternate icon" type="image/png" href="/assets/i/favicon.png">
+    <link rel="stylesheet" href="/assets/css/style.css"/>
+    <link rel="stylesheet" href="/assets/css/editormd.css"/>
+    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <style>
+        @media only screen and (min-width: 1200px) {
+            .blog-g-fixed {
+                max-width: 1200px;
+            }
+        }
+
+        @media only screen and (min-width: 641px) {
+            .blog-sidebar {
+                font-size: 1.4rem;
+            }
+        }
+
+        .blog-main {
+            padding: 20px 0;
+        }
+
+        .blog-title {
+            margin: 10px 0 20px 0;
+        }
+
+        .blog-meta {
+            font-size: 14px;
+            margin: 10px 0 20px 0;
+            color: #222;
+        }
+
+        .blog-meta a {
+            color: #27ae60;
+        }
+
+        .blog-pagination a {
+            font-size: 1.4rem;
+        }
+
+        .blog-team li {
+            padding: 4px;
+        }
+
+        .blog-team img {
+            margin-bottom: 0;
+        }
+
+        .blog-footer {
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .font-color {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<header class="am-topbar">
+    <h1 class="am-topbar-brand">
+        <a href="/">Blog</a>
+    </h1>
+
+    <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
+            data-am-collapse="{target: '#doc-topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span
+            class="am-icon-bars"></span></button>
+
+    <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
+        <ul class="am-nav am-nav-pills am-topbar-nav">
+            <li class="am-active"><a href="#">首页</a></li>
+            <li><a href="#">项目</a></li>
+            <li class="am-dropdown" data-am-dropdown>
+                <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                    下拉 <span class="am-icon-caret-down"></span>
+                </a>
+                <ul class="am-dropdown-content">
+                    <li class="am-dropdown-header">标题</li>
+                    <li><a href="#">1. 去月球</a></li>
+                    <li class="am-active"><a href="#">2. 去火星</a></li>
+                    <li><a href="#">3. 还是回地球</a></li>
+                    <li class="am-disabled"><a href="#">4. 下地狱</a></li>
+                    <li class="am-divider"></li>
+                    <li><a href="#">5. 桥头一回首</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <form class="am-topbar-form am-topbar-left am-form-inline" role="search">
+            <div class="am-form-group">
+                <input type="text" class="am-form-field am-input-sm" placeholder="搜索">
+            </div>
+        </form>
+
+        <div class="am-topbar-right" th:if="${session.user == null}">
+            <a href="/login" class="am-btn am-btn-primary am-topbar-btn am-btn-sm" style="color: white;">登录</a>
+            <a href="/register" class="am-btn am-btn-success am-topbar-btn am-btn-sm" style="color: white;">注册</a>
+        </div>
+
+        <div class="am-dropdown am-topbar-right" data-am-dropdown th:if="${session.user != null}">
+            <a href="/publish" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color: #666666;">写博客</a>
+            <button class="am-btn am-btn-primary am-dropdown-toggle am-topbar-btn am-btn-sm" data-am-dropdown-toggle
+                    th:text="${session.user.getUsername()}">
+                <span class="am-icon-caret-down"></span>
+            </button>
+            <ul class="am-dropdown-content">
+                <li><a href="#">个人中心</a></li>
+                <li class="am-active"><a href="#">最荣幸是</a></li>
+                <li><a href="#">谁都是造物者的光荣</a></li>
+                <li class="am-disabled"><a href="#">就站在光明的角落</a></li>
+                <li class="am-divider"></li>
+                <li><a href="/logout">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="am-g col-lg-9 am-fl">
+    <form class="am-form am-form-horizontal" method="post">
+        <fieldset>
+            <legend>表单标题</legend>
+
+            <div class="am-form-group">
+                <label for="title" class="col-sm-1 am-form-label">标题</label>
+                <div class="col-sm-11">
+                    <input type="text" id="title" name="title" placeholder="请输入标题">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label for="tags" class="col-sm-1 am-form-label">标签</label>
+                <div class="col-sm-11">
+                    <input type="text" id="tags" name="tags" placeholder="请输入标签，多个标签请以逗号分隔">
+                </div>
+            </div>
+
+            <div class="am-form-group">
+                <label for="category" class="col-sm-1 am-form-label">分类</label>
+                <div class="col-sm-11">
+                    <input type="text" id="category" name="category" placeholder="请输入博客类型">
+                </div>
+            </div>
+
+            <div class="am-form-group" id="editor">
+                <!-- Tips: Editor.md can auto append a `<textarea>` tag -->
+                <textarea id="content" name="content" style="display:none;">### Hello Editor.md !</textarea>
+            </div>
+            <script src="/assets/js/jquery.min.js" type="application/javascript"></script>
+            <script src="/assets/js/editormd.js" type="application/javascript"></script>
+            <script type="text/javascript">
+                $(function () {
+                    var editor = editormd("editor", {
+                        width: "100%",
+                        height: 600,
+                        delay: 0,
+                        watch: true,
+                        imageUpload: true,
+                        imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                        imageUploadURL: "/file/upload",
+                        // markdown: "xxxx",     // dynamic set Markdown text
+                        path: "/assets/js/lib/"  // Autoload modules mode, codemirror, marked... dependents libs path
+                    });
+                });
+            </script>
+            <input type="submit" class="am-btn am-btn-primary am-fr">
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>
