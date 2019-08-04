@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:insert="~{navigation::head}"></div>
+<link rel="stylesheet" href="/css/editormd.preview.css" />
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/editormd.js"></script>
+<script src="/js/lib/marked.min.js"></script>
+<script src="/js/lib/prettify.min.js"></script>
+<body>
+<div th:insert="~{navigation::navition}"></div>
+
+<div class="am-g am-g-fixed blog-g-fixed">
+    <div class="col-md-8">
+        <!-- 标题 -->
+        <div>
+            <h3 th:text="${article.getArticleTitle()}"></h3>
+        </div>
+
+        <!-- 内容 -->
+        <div id="article-markdown-view">
+            <!-- Server-side output Markdown text -->
+            <textarea style="display:none;" th:text="${article.getArticleContent()}"></textarea>
+        </div>
+        <script type="text/javascript">
+            $(function() {
+                editormd.markdownToHTML("article-markdown-view", {
+                    // markdown : "[TOC]\n### Hello world!\n## Heading 2", // Also, you can dynamic set Markdown text
+                    // htmlDecode : true,  // Enable / disable HTML tag encode.
+                    // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
+                });
+            });
+        </script>
+        <hr class="am-article-divider blog-hr">
+        <div th:if="${session.user!=null}">
+            <a th:if="${session.user.getUsername()==article.getAuthor()}" th:href="@{'/publish/'+${article.getId()}}"
+               type="button"
+               class="am-btn am-btn-success am-fr">修改
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer class="blog-footer">
+    <p>blog template<br/>
+        <small>© Copyright XXX. by the AmazeUI Team.</small>
+    </p>
+</footer>
+
+<script src="/js/zepto.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+</body>
+</html>

@@ -13,9 +13,9 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="alternate icon" type="image/png" href="/assets/i/favicon.png">
-    <link rel="stylesheet" href="/assets/css/amazeui.min.css"/>
-    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="alternate icon" type="image/png" href="/i/favicon.png">
+    <link rel="stylesheet" href="/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/css/blog.css">
     <style>
         @media only screen and (min-width: 1200px) {
             .blog-g-fixed {
@@ -81,8 +81,8 @@
 
         <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
             <ul class="am-nav am-nav-pills am-topbar-nav">
-                <li class="am-active"><a href="#">首页</a></li>
-                <li><a href="#">项目</a></li>
+                <li th:class="${#httpServletRequest.getRequestURI()=='/'}?'am-active':''"><a href="/">首页</a></li>
+                <li th:class="${#httpServletRequest.getRequestURI()=='/publish'}?'am-active':''"><a href="#">项目</a></li>
                 <li class="am-dropdown" data-am-dropdown>
                     <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                         下拉 <span class="am-icon-caret-down"></span>
@@ -105,24 +105,27 @@
                 </div>
             </form>
 
-            <div class="am-topbar-right" th:if="${session.user == null}">
-                <a href="/login" class="am-btn am-btn-primary am-topbar-btn am-btn-sm" style="color: white;">登录</a>
-                <a href="/register" class="am-btn am-btn-success am-topbar-btn am-btn-sm" style="color: white;">注册</a>
-            </div>
-            <div class="am-dropdown am-topbar-right" data-am-dropdown th:if="${session.user != null}">
-                <a href="/publish" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color: #666666;">写博客</a>
-                <button class="am-btn am-btn-primary am-dropdown-toggle am-topbar-btn am-btn-sm"
-                        data-am-dropdown-toggle th:text="${session.user.getUsername()}">
-                    <span class="am-icon-caret-down"></span>
-                </button>
-                <ul class="am-dropdown-content">
-                    <li><a href="#">个人中心</a></li>
-                    <li class="am-active"><a href="#">最荣幸是</a></li>
-                    <li><a href="#">谁都是造物者的光荣</a></li>
-                    <li class="am-disabled"><a href="#">就站在光明的角落</a></li>
-                    <li class="am-divider"></li>
-                    <li><a href="/logout">退出登录</a></li>
-                </ul>
+            <div class="am-topbar-right">
+                <a href="/publish" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color:
+            #666666;">写博客</a>
+                <span th:if="${session.user == null}">
+                    <a href="/login" class="am-btn am-btn-primary am-topbar-btn am-btn-sm" style="color: white;">登录</a>
+                    <a href="/register" class="am-btn am-btn-success am-topbar-btn am-btn-sm" style="color: white;">注册</a>
+                </span>
+                <div class="am-dropdown" data-am-dropdown th:if="${session.user != null}">
+                    <button class="am-btn am-btn-primary am-dropdown-toggle am-topbar-btn am-btn-sm"
+                            data-am-dropdown-toggle th:text="${session.user.getUsername()}">
+                        <span class="am-icon-caret-down"></span>
+                    </button>
+                    <ul class="am-dropdown-content">
+                        <li><a href="#">个人中心</a></li>
+                        <li class="am-active"><a href="#">最荣幸是</a></li>
+                        <li><a href="#">谁都是造物者的光荣</a></li>
+                        <li class="am-disabled"><a href="#">就站在光明的角落</a></li>
+                        <li class="am-divider"></li>
+                        <li><a href="/logout">退出登录</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </header>

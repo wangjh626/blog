@@ -22,7 +22,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 要先注入拦截器！！！
         registry.addInterceptor(sessionInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(userInterceptor).addPathPatterns("/**").excludePathPatterns("/", "/login", "/register", "/assets/js/**", "/assets/css/**");
+        registry.addInterceptor(userInterceptor).addPathPatterns("/publish/**");
+        //.excludePathPatterns("/", "/login",
+        //                "/register", "/article/**","/assets/js/**", "/assets/css/**")
     }
 
     @Override
