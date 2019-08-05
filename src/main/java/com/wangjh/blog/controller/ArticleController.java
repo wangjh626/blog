@@ -76,13 +76,29 @@ public class ArticleController {
         return "article-table-category";
     }
 
+    /**
+     * 根据 id 获取到某个分类下的所有博客文章，并将数据传递给展示页面
+     * @param id
+     * @return
+     */
     @GetMapping("/category/{id}")
     public ModelAndView listByCategory(@PathVariable("id") Integer id) {
         ModelAndView modelAndView = new ModelAndView("article-table-category-list");
+        // 根据 id 获取一个分类下的所有博客文章
         CategoryDTO category = categories.get(id);
         List<Article> articles = articleService.listByCategory(category.getName());
         modelAndView.addObject("articles", articles);
-        modelAndView.setViewName("redirect:/category/list");
+        // 通过 forward 定位到展示页面
+        modelAndView.setViewName("forward:/category/list");
         return modelAndView;
+    }
+
+    /**
+     * 展示某个分类下的所有博客文章
+     * @return
+     */
+    @GetMapping("/category/list")
+    public String list() {
+        return "article-table-category-list";
     }
 }
