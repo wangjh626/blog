@@ -1,6 +1,7 @@
 package com.wangjh.blog.service;
 
 import com.alibaba.druid.util.StringUtils;
+import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.UserMapper;
@@ -8,6 +9,7 @@ import com.wangjh.blog.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,5 +41,30 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 根据用户名查找用户
+     * @param username
+     * @return
+     */
+    public User findByName(String username) {
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUsernameEqualTo(username);
+        return userMapper.selectByExample(userExample).get(0);
+    }
+
+    /**
+     * 根据评论 id 获取评论者的用户名
+     * @param comments
+     * @return
+     */
+    public List<User> findByComment(List<Comment> comments) {
+        List<User> users = new ArrayList<>();
+        for (Comment comment : comments) {
+            User user = userMapper.selectByPrimaryKey(comment.getAnswererId());
+            users.add(user);
+        }
+        return users;
     }
 }

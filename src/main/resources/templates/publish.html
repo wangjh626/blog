@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="/css/editormd.css"/>
     <link rel="stylesheet" href="/css/amazeui.min.css"/>
     <link rel="stylesheet" href="/css/blog.css">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/js/blog.js"></script>
     <style>
         @media only screen and (min-width: 1200px) {
             .blog-g-fixed {
@@ -70,7 +72,7 @@
 <body>
 <div th:insert="~{navigation::navition}"></div>
 <div class="am-g col-lg-9 am-fl">
-    <form class="am-form am-form-horizontal" method="post">
+    <form name="publish" class="am-form am-form-horizontal" method="post">
         <fieldset>
             <legend>发一篇博客吧~</legend>
 
@@ -82,6 +84,13 @@
             </div>
 
             <div class="am-form-group">
+                <label for="category" class="col-sm-1 am-form-label">分类</label>
+                <div class="col-sm-11">
+                    <input type="text" id="category" name="category" placeholder="请输入博客的分类" th:value="${category}">
+                </div>
+            </div>
+
+            <div class="am-form-group">
                 <label for="tags" class="col-sm-1 am-form-label">标签</label>
                 <div class="col-sm-11">
                     <input type="text" id="tags" name="tags" placeholder="请输入标签，多个标签请以逗号分隔" th:value="${tags}">
@@ -89,9 +98,9 @@
             </div>
 
             <div class="am-form-group">
-                <label for="category" class="col-sm-1 am-form-label">分类</label>
+                <label for="type" class="col-sm-1 am-form-label">类型</label>
                 <div class="col-sm-11">
-                    <input type="text" id="category" name="category" placeholder="请输入博客类型" th:value="${category}">
+                    <input type="text" id="type" name="type" placeholder="原创 or 转载" th:value="${type}">
                 </div>
             </div>
 
@@ -119,7 +128,7 @@
                     });
                 });
             </script>
-            <input type="submit" class="am-btn am-btn-primary am-fr">
+            <input type="submit" class="am-btn am-btn-primary am-fr" onclick="errorMessgae()">
         </fieldset>
     </form>
 </div>

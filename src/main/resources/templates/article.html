@@ -13,7 +13,7 @@
     <div class="col-md-8">
         <!-- 标题 -->
         <div>
-            <h3 th:text="${article.getArticleTitle()}"></h3>
+            <h1 th:text="${article.getArticleTitle()}" style="text-align: center"></h1>
         </div>
 
         <!-- 内容 -->
@@ -31,12 +31,57 @@
             });
         </script>
         <hr class="am-article-divider blog-hr">
-        <div th:if="${session.user!=null}">
-            <a th:if="${session.user.getUsername()==article.getAuthor()}" th:href="@{'/publish/'+${article.getId()}}"
-               type="button"
-               class="am-btn am-btn-success am-fr">修改
+<!--        <div th:if="${session.user!=null}">-->
+<!--            <a th:if="${session.user.getUsername()==article.getAuthor()}" th:href="@{'/publish/'+${article.getId()}}"-->
+<!--               type="button"-->
+<!--               class="am-btn am-btn-success am-fr">修改-->
+<!--            </a>-->
+<!--        </div>-->
+        <form class="am-form" id="comment" method="post">
+            <fieldset>
+                <div th:if="${session.user==null}">
+                    <div style="border-style: double; border-color: dodgerblue; border-width: thin; height: 120px;
+                    margin: 15px 0;">
+                        <a href="/login">登录</a>后才可以评论哟~
+                    </div>
+                </div>
+                <div class="am-form-group" th:if="${session.user!=null}">
+                    <label for="comment_content"></label>
+                    <textarea class="" rows="5" id="comment_content" name="comment_content" style="border-color: dodgerblue"></textarea>
+                </div>
+                <span>
+                    <button th:if="${session.user==null}" type="button" class="am-btn am-btn-primary am-btn-xs am-fr"
+                            disabled="disabled">发表评论
+                    </button>
+                    <button th:if="${session.user!=null}" type="submit" class="am-btn am-btn-secondary am-btn-xs am-fr">
+                        发表评论
+                    </button>
+                </span>
+            </fieldset>
+        </form>
+        <article class="am-comment" th:each="comment:${comments}"> <!-- 评论容器 -->
+            <a href="">
+                <img class="am-comment-avatar" alt=""/> <!-- 评论者头像 -->
             </a>
-        </div>
+
+            <div class="am-comment-main"> <!-- 评论内容容器 -->
+                <header class="am-comment-hd">
+                    <!--<h3 class="am-comment-title">评论标题</h3>-->
+                    <!-- 评论元数据 -->
+                    <div class="am-comment-meta">
+                        <!-- 评论者 -->
+                        <a href="#link-to-user" class="am-comment-author" th:text="${comment.getAnswererUsername()}"
+                           style="color: deepskyblue;"
+                        ></a>
+                        <time th:text="${#dates.format(comment.getCommentDate(), 'yyyy-MM-dd HH:mm:ss')}"
+                              class="am-fr"></time>
+                    </div>
+                </header>
+                <!-- 评论内容 -->
+                <div class="am-comment-bd" th:text="${comment.getCommentContent()}"></div>
+            </div>
+            <hr class="am-article-divider blog-hr">
+        </article>
     </div>
 </div>
 

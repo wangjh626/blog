@@ -11,6 +11,7 @@ import com.wangjh.blog.mapper.ArticleMapper;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -31,15 +32,21 @@ public class ArticleService {
      * @param content   博客内容
      * @param user
      */
-    public void insert(String title, String tags, String content, String category, User user) {
+    public void insert(String title, String category, String tags, String type, String content, User user) {
         Article article = new Article();
         article.setAuthor(user.getUsername());
         article.setArticleTitle(title);
-        article.setArticleContent(content);
-        article.setArticleTags(tags);
         article.setArticleCategories(category);
-        article.setPublishDate(String.valueOf(new Date()));
-        article.setUpdateDate(String.valueOf(new Date()));
+        article.setArticleTags(tags);
+        article.setArticleType(type);
+        article.setArticleContent(content);
+        if (StringUtils.length(content) >= 200) {
+            article.setArticleTabloid(content.substring(0, 200));
+        } else {
+            article.setArticleTabloid(content);
+        }
+        article.setPublishDate(System.currentTimeMillis());
+        article.setUpdateDate(article.getPublishDate());
         article.setLikes(0);
         articleMapper.insert(article);
     }
@@ -48,13 +55,19 @@ public class ArticleService {
         return articleMapper.selectByPrimaryKey(id);
     }
 
-    public void update(Integer id, String title, String tags, String content, String category) {
+    public void update(Integer id, String title, String category, String tags, String type, String content) {
         Article article = articleMapper.selectByPrimaryKey(id);
-        article.setUpdateDate(String.valueOf(new Date()));
+        article.setUpdateDate(System.currentTimeMillis());
         article.setArticleTitle(title);
-        article.setArticleTags(tags);
-        article.setArticleContent(content);
         article.setArticleCategories(category);
+        article.setArticleTags(tags);
+        article.setArticleType(type);
+        article.setArticleContent(content);
+        if (StringUtils.length(content) >= 200) {
+            article.setArticleTabloid(content.substring(0, 200));
+        } else {
+            article.setArticleTabloid(content);
+        }
         articleMapper.updateByPrimaryKey(article);
     }
 
@@ -108,4 +121,5 @@ public class ArticleService {
         paginationDTO.setData(articleList);
         return paginationDTO;
     }
+
 }
