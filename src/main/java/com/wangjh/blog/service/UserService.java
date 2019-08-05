@@ -67,4 +67,22 @@ public class UserService {
         }
         return users;
     }
+
+    /**
+     * 修改个人资料
+     * @param username
+     * @param email
+     * @param intro
+     * @param avatar
+     * @return
+     */
+    public void modifyProfile(Integer id, String username, String email, String intro, String avatar) {
+        User user = userMapper.selectByPrimaryKey(id);
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPersonalBrief(intro);
+        user.setAvatarImgUrl(avatar);
+        userMapper.updateByPrimaryKey(user);
+    }
+
 }

@@ -123,7 +123,7 @@ public class PublishController {
             modelAndView.addObject("errorMessage", "类型有误，请输入原创或转载");
             return modelAndView;
         }
-        modelAndView.setViewName("redirect:/");
+        modelAndView.setViewName("redirect:/articleTable");
         return modelAndView;
     }
 }

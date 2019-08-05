@@ -2,6 +2,7 @@ package com.wangjh.blog.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.wangjh.blog.dto.CategoryDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.ArticleExample;
@@ -13,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ArticleService {
@@ -122,4 +122,50 @@ public class ArticleService {
         return paginationDTO;
     }
 
+    /**
+     * 根据文章 id 删除文章
+     * @param articleId
+     */
+    public void deleteById(Integer articleId) {
+        articleMapper.deleteByPrimaryKey(articleId);
+    }
+
+    /**
+     * 博客的所有分类
+     * @return
+     */
+    public List<CategoryDTO> listCategories() {
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        // 查询所有的博客
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andIdIsNotNull();
+        List<Article> articles = articleMapper.selectByExample(articleExample);
+        // 将不重复的分类存入一个 ArrayLIst 中
+        List<String> categories = new ArrayList<>();
+        for (Article article : articles) {
+            if (!categories.contains(article.getArticleCategories())) {
+                categories.add(article.getArticleCategories());
+            }
+        }
+        // 得到一个 CategoryDTO 的 List
+        for (int i = 0; i < categories.size(); i++) {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setId(i);
+            categoryDTO.setName(categories.get(i));
+            categoryDTOList.add(categoryDTO);
+        }
+        return categoryDTOList;
+    }
+
+    /**
+     * 根据 category 查找所有博客文章
+     * @param category
+     * @return
+     */
+    public List<Article> listByCategory(String category) {
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andArticleCategoriesEqualTo(category);
+        List<Article> articles = articleMapper.selectByExample(articleExample);
+        return articles;
+    }
 }

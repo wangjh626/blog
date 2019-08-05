@@ -18,6 +18,6 @@ function errorMessgae() {
     }
 }
 
-function markdownToHtml() {
-    var id = document.getElementById("article")
+function modifiedUser() {
+    alert("修改成功！")
 }

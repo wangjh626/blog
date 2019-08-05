@@ -1,0 +1,142 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Amaze UI Admin user Examples</title>
+  <meta name="description" content="这是一个 user 页面">
+  <meta name="keywords" content="user">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="icon" type="image/png" href="/i/favicon.png">
+  <link rel="apple-touch-icon-precomposed" href="/i/app-icon72x72@2x.png">
+  <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+  <link rel="stylesheet" href="/css/amazeui.min.css"/>
+  <link rel="stylesheet" href="/css/admin.css">
+  <script src="/js/blog.js"></script>
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+  以获得更好的体验！</p>
+<![endif]-->
+
+<div th:insert="~{admin-common::header}"></div>
+
+<div class="am-cf admin-main">
+  <!-- sidebar start -->
+  <div th:insert="~{admin-common::sidebar}"></div>
+  <!-- sidebar end -->
+
+  <!-- content start -->
+  <div class="admin-content">
+    <div class="am-cf am-padding">
+      <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">个人资料</strong> / <small>Personal information</small></div>
+    </div>
+
+    <hr/>
+
+    <div class="am-g">
+
+      <div class="col-sm-12 col-md-4 col-md-push-8">
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-bd">
+            <div class="am-g">
+              <div class="col-md-4">
+                <img class="am-img-circle am-img-thumbnail" src="http://amui.qiniudn.com/bw-2014-06-19.jpg?imageView/1/w/1000/h/1000/q/80" alt=""/>
+              </div>
+              <div class="col-md-8">
+
+                <form class="am-form" method="post">
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="am-panel am-panel-default">
+          <div class="am-panel-bd">
+            <div class="user-info">
+              <p>等级信息</p>
+              <div class="am-progress am-progress-sm">
+                <div class="am-progress-bar" style="width: 60%"></div>
+              </div>
+              <p class="user-info-order">当前等级：<strong>LV8</strong> 活跃天数：<strong>587</strong> 距离下一级别：<strong>160</strong></p>
+            </div>
+            <div class="user-info">
+              <p>信用信息</p>
+              <div class="am-progress am-progress-sm">
+                <div class="am-progress-bar am-progress-bar-success" style="width: 80%"></div>
+              </div>
+              <p class="user-info-order">信用等级：正常当前 信用积分：<strong>80</strong></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-sm-12 col-md-8 col-md-pull-4">
+        <form class="am-form am-form-horizontal" method="post">
+          <div class="am-form-group">
+            <label for="name" class="col-sm-3 am-form-label">用户名 / Name</label>
+            <div class="col-sm-9">
+              <input type="text" id="name" name="name" placeholder="用户名 / Name" th:value="${user.getUsername()}">
+              <small>输入你的名字，让我们记住你。</small>
+            </div>
+          </div>
+          <div class="am-form-group">
+            <label for="email" class="col-sm-3 am-form-label">电子邮件 / Email</label>
+            <div class="col-sm-9">
+              <input type="email" id="email" name="email" placeholder="输入你的电子邮件 / Email"
+                     th:value="${user.getEmail()}">
+              <small>邮箱你懂得...</small>
+            </div>
+          </div>
+          <div class="am-form-group">
+          <label for="avatar" class="col-sm-3 am-form-label">头像 Url / Avatar Url</label>
+          <div class="col-sm-9">
+            <input type="text" id="avatar" name="avatar" placeholder="输入你的头像地址 / Avatar Url"
+                   th:value="${user.getAvatarImgUrl()}">
+            <small>头像地址你懂得...</small>
+          </div>
+        </div>
+
+<!--          <div class="am-form-group">-->
+<!--            <p>你可以使用<a href="#">gravatar.com</a>提供的头像或者使用本地上传头像。 </p>-->
+<!--            <input type="file" id="pic" name="pic">-->
+<!--            <p class="am-form-help">请选择要上传的文件...</p>-->
+<!--          </div>-->
+
+          <div class="am-form-group">
+            <label for="intro" class="col-sm-3 am-form-label">个人简介 / Intro</label>
+            <div class="col-sm-9">
+              <textarea class="" rows="5" id="intro" name="intro" placeholder="输入个人简介"
+                        th:text="${user.getPersonalBrief()}"></textarea>
+              <small>250字以内写出你的一生...</small>
+            </div>
+          </div>
+          <div class="am-form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="am-btn am-btn-secondary" onclick="modifiedUser()">保存修改</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- content end -->
+
+</div>
+
+<footer>
+  <hr>
+  <p class="am-padding-left">© 2014 AllMobilize, Inc. Licensed under MIT license.</p>
+</footer>
+
+<script src="/js/zepto.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

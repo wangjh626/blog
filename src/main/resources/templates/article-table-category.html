@@ -1,0 +1,142 @@
+<!doctype html>
+<html class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amaze UI Admin table Examples</title>
+    <meta name="description" content="这是一个 table 页面">
+    <meta name="keywords" content="table">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="/js/blog.js"></script>
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<div th:insert="~{admin-common::header}"></div>
+
+<div class="am-cf admin-main">
+    <!-- sidebar start -->
+    <div th:insert="~{admin-common::sidebar}"></div>
+    <!-- sidebar end -->
+
+    <!-- content start -->
+    <div class="admin-content">
+
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">分类</strong> /
+                <small>Categories</small>
+            </div>
+        </div>
+
+        <div class="am-g">
+            <div class="col-md-3 am-cf am-fr">
+                <div class="am-fr">
+                    <div class="am-input-group am-input-group-sm">
+                        <input type="text" class="am-form-field">
+                        <span class="am-input-group-btn">
+                  <button class="am-btn am-btn-default" type="button">搜索</button>
+                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="am-g">
+            <div class="col-sm-12">
+                <form class="am-form" th:if="${articles==null}">
+                    <span th:each="category:${categories}">
+                        <a th:text="${category.getName()}" th:href="@{'/category/'+${category.getId()}}"
+                           class="am-icon-folder" style="margin: 5px"></a>
+                    </span>
+                    <hr/>
+                </form>
+                <form class="am-form" th:if="${articles!=null}">
+                    <table class="am-table am-table-striped am-table-hover table-main">
+                        <thead>
+                        <tr>
+                            <th class="table-id">ID</th>
+                            <th class="table-title">标题</th>
+                            <th class="table-type">分类</th>
+                            <th class="table-author">标签</th>
+                            <th class="table-author">类型</th>
+                            <th class="table-date">发布日期</th>
+                            <th class="table-date">修改日期</th>
+                            <th class="table-set">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="article:${articles}">
+                            <td th:text="${article.getId()}"></td>
+                            <td><a th:href="@{'/article/'+${article.getId()}}"
+                                   th:text="${article.getArticleTitle()}"></a></td>
+                            <td th:text="${article.getArticleCategories()}"></td>
+                            <td th:text="${article.getArticleTags()}"></td>
+                            <td th:text="${article.getArticleType()}"></td>
+                            <td th:text="${#dates.format(article.getPublishDate(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td th:text="${#dates.format(article.getUpdateDate(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <button class="am-btn am-btn-default am-btn-xs am-text-secondary">
+                                            <a th:href="@{'/publish/'+${article.getId()}}">
+                                                <span class="am-icon-pencil-square-o"></span> 编辑
+                                            </a>
+                                        </button>
+                                        <button class="am-btn am-btn-default am-btn-xs">
+                                            <a th:href="@{'/delete/'+${article.getId()}}" style="color: #dd514c;">
+                                                <span class="am-icon-trash-o"></span> 删除
+                                            </a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="am-cf">
+                        共 <span th:text="${paginationDTO.getData().size()}"></span> 条记录
+                        <div class="am-fr">
+                            <ul class="am-pagination">
+                                <li><a th:if="${paginationDTO.getPage()!=1}"
+                                       th:href="@{/(page=${paginationDTO.getPage()-1})}">«</a>
+                                </li>
+                                <li th:each="page:${paginationDTO.getPages()}"
+                                    th:class="${paginationDTO.getPage()==page}?'active':''">
+                                    <a th:href="@{/(page=${page})}" th:text="${page}"></a>
+                                </li>
+                                <li><a th:if="${paginationDTO.getPage()!=paginationDTO.getTotalPage()}"
+                                       th:href="@{/(page=${paginationDTO.getPage()+1})}">»</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr/>
+                </form>
+            </div>
+            <div class="col-sm-12">
+            </div>
+        </div>
+    </div>
+    <!-- content end -->
+</div>
+
+<footer>
+    <hr>
+    <p class="am-padding-left">© 2014 AllMobilize, Inc. Licensed under MIT license.</p>
+</footer>
+
+<script src="/js/zepto.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
