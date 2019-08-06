@@ -124,6 +124,9 @@ public class ArticleService {
         // 得到某一页的文章
         List<Article> articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * size,
                 size));
+        for (Article article : articleList) {
+            String[] strings = article.getArticleTags().split(",");
+        }
         paginationDTO.setData(articleList);
         return paginationDTO;
     }
@@ -211,6 +214,51 @@ public class ArticleService {
                 new RowBounds((page - 1) * size, size));
 
         paginationDTO.setPagination(totalPage, page);
+        paginationDTO.setData(articleList);
+        return paginationDTO;
+    }
+
+    public PaginationDTO listByUsername(String username, Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+
+        /* 总页数 */
+        Integer totalPage;
+        /* 文章总数 */
+        Integer totalCount;
+
+        // 获取所有文章
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andIdIsNotNull().andAuthorEqualTo(username);
+        List<Article> articles = articleMapper.selectByExample(articleExample);
+
+        // 根据文章总数计算总页数
+        totalCount = articles.size();
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount/ size + 1;
+        }
+
+        // 防止页面页数越界
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+
+        // 根据总页数和当前页数计算当前页面需要显示的页数
+        paginationDTO.setPagination(totalPage, page);
+        // 将所有文章按时间倒序排序
+        ArticleExample example = new ArticleExample();
+        example.createCriteria().andIdIsNotNull().andAuthorEqualTo(username);
+        example.setOrderByClause("publish_date desc");
+        // 得到某一页的文章
+        List<Article> articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * size,
+                size));
+        for (Article article : articleList) {
+            String[] strings = article.getArticleTags().split(",");
+        }
         paginationDTO.setData(articleList);
         return paginationDTO;
     }

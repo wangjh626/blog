@@ -9,34 +9,70 @@
 <body>
 <div th:insert="~{navigation::navition}"></div>
 
+<!--<div class="col-sm-2" th:if="${session.user!=null}">-->
+<!--    <div class="am-panel am-panel-default">-->
+<!--        <div class="am-panel-bd">-->
+<!--            <div class="col-sm-6">-->
+<!--                <img th:src="${session.user.getAvatarImgUrl()}" alt="">-->
+<!--            </div>-->
+<!--            <p th:text="${session.user.getUsername()}"></p>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
 <div class="am-g am-g-fixed blog-g-fixed">
+
     <div class="col-md-9">
-        <div th:each="article:${articles}">
-            <article class="blog-main">
-                <h4 class="am-article-title blog-title">
-                    <a th:text="${article.getArticleTitle()}" th:href="@{'/article/'+${article.getId()}}"
-                       style="font-size: 24px; color: #7f7f7f;"></a>
-                </h4>
-                <span class="am-badge am-badge-success" th:text="${article.getArticleType()}"></span>
-                <span class="am-icon-calendar" style="color: #7f7f7f;"
-                      th:text="${#dates.format(article.getPublishDate(), 'yyyy-MM-dd')}"></span>
-                <span class="am-icon-user" style="color: #7f7f7f;" th:text="${article.getAuthor()}"></span>
-                <span class="am-icon-folder" style="color: #7f7f7f;" th:text="${article.getArticleCategories()}"></span>
-                <div class="am-g col-sm-12">
-                    <div id="article-view">
-                        <textarea style="display:none;" th:text="${article.getArticleTabloid()}"></textarea>
+
+        <div class="am-panel am-panel-default" th:each="article:${paginationDTO.getData()}">
+            <div class="am-panel-bd">
+                <article class="">
+                    <h4 class="am-article-title blog-title">
+                        <a th:text="${article.getArticleTitle()}" th:href="@{'/article/'+${article.getId()}}"
+                           style="font-size: 24px; color: #7f7f7f;" target="_blank"></a>
+                    </h4>
+                    <span class="am-badge am-badge-success" th:text="${article.getArticleType()}"></span>
+                    <span class="am-icon-calendar" style="color: #7f7f7f;"
+                          th:text="${#dates.format(article.getPublishDate(), 'yyyy-MM-dd')}"></span>
+                    <span class="am-icon-user" style="color: #7f7f7f;" th:text="${article.getAuthor()}"></span>
+                    <span class="am-icon-folder" style="color: #7f7f7f;"
+                          th:text="${article.getArticleCategories()}"></span>
+                    <div class="am-g col-sm-12">
+                        <div th:text="${article.getArticleTabloid()}"
+                             style="font-size: 16px;padding: 10px 8px;line-height: 2em;color: #565a5f"></div>
+<!--                        <div id="article-view">-->
+<!--                            <textarea style="display:none;" th:text="${article.getArticleContent()}"></textarea>-->
+<!--                        </div>-->
+<!--                        <script type="text/javascript">-->
+<!--                            $(function () {-->
+<!--                                var testView = editormd.markdownToHTML("article-view", {-->
+<!--                                    // markdown : "[TOC]\n### Hello world!\n## Heading 2", // Also, you can dynamic set Markdown text-->
+<!--                                    htmlDecode: true,  // Enable / disable HTML tag encode.-->
+<!--                                    htmlDecode: "style,script,iframe"  // Note: If enabled, you should filter some dangerous HTML tags for website security.-->
+<!--                                });-->
+<!--                            });-->
+<!--                        </script>-->
+                        <div class="read-all">
+                            <a th:href="@{'/article/'+${article.getId()}}" target="_blank"
+                               style="font-size: 15px; color: #7f7f7f">阅读全文
+                                <i class="am-icon-angle-double-right"></i>
+                            </a>
+                        </div>
                     </div>
-                    <script type="text/javascript">
-                        $(function () {
-                            editormd.markdownToHTML("article-view", {});
-                        });
-                    </script>
-                    <div>
-                        <a th:href="@{'/article/'+${article.getId()}}">阅读全文</a>
-                    </div>
+                </article>
+                <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
+                <div>
+                    <span th:each="tag:${tagDTO.getArticleTags(article)}">
+                        <i class="am-icon-tag am-btn am-btn-primary am-round am-btn-xs">
+                            <span th:text="${tag}"></span>
+                        </i>
+                    </span>
                 </div>
-            </article>
-            <hr class="am-article-divider blog-hr">
+            </div>
+        </div>
+
+        <div>
+
         </div>
         <ul class="am-pagination am-pagination-centered">
             <li><a th:if="${paginationDTO.getPage()!=1}" th:href="@{/(page=${paginationDTO.getPage() - 1})}">上一页</a>
@@ -50,8 +86,8 @@
             </a></li>
         </ul>
     </div>
-
     <div class="col-md-3 blog-sidebar">
+
         <div class="am-panel-group">
             <section class="am-panel am-panel-default">
                 <div class="am-panel-hd">关于我</div>
