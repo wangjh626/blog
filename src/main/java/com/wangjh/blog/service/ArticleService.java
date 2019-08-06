@@ -94,11 +94,13 @@ public class ArticleService {
         /* 文章总数 */
         Integer totalCount;
 
+        // 获取所有文章
         ArticleExample articleExample = new ArticleExample();
         articleExample.createCriteria().andIdIsNotNull();
         List<Article> articles = articleMapper.selectByExample(articleExample);
-        totalCount = articles.size();
 
+        // 根据文章总数计算总页数
+        totalCount = articles.size();
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
         } else {
@@ -113,11 +115,15 @@ public class ArticleService {
             page = totalPage;
         }
 
+        // 根据总页数和当前页数计算当前页面需要显示的页数
         paginationDTO.setPagination(totalPage, page);
+        // 将所有文章按时间倒序排序
         ArticleExample example = new ArticleExample();
         example.createCriteria().andIdIsNotNull();
         example.setOrderByClause("publish_date desc");
-        List<Article> articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * 5, size));
+        // 得到某一页的文章
+        List<Article> articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * size,
+                size));
         paginationDTO.setData(articleList);
         return paginationDTO;
     }
@@ -167,5 +173,45 @@ public class ArticleService {
         articleExample.createCriteria().andArticleCategoriesEqualTo(category);
         List<Article> articles = articleMapper.selectByExample(articleExample);
         return articles;
+    }
+
+    public PaginationDTO<Article> paginationByCategory(String category, Integer page, Integer size) {
+        PaginationDTO<Article> paginationDTO = new PaginationDTO<>();
+
+        /* 总页数 */
+        Integer totalPage;
+        /* 文章总数 */
+        Integer totalCount;
+
+        // 获取所有分类为 category 的文章
+        ArticleExample example = new ArticleExample();
+        example.createCriteria().andArticleCategoriesEqualTo(category);
+        List<Article> articles = articleMapper.selectByExample(example);
+
+        // 根据文章总数计算总页数
+        totalCount = articles.size();
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+
+        // 防止页面页数越界
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+
+        // 得到某一页的文章
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andArticleCategoriesEqualTo(category);
+        List<Article> articleList = articleMapper.selectByExampleWithRowbounds(articleExample,
+                new RowBounds((page - 1) * size, size));
+
+        paginationDTO.setPagination(totalPage, page);
+        paginationDTO.setData(articleList);
+        return paginationDTO;
     }
 }

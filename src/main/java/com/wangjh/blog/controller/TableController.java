@@ -17,7 +17,7 @@ public class TableController {
     private ArticleService articleService;
 
     @GetMapping("/articleTable")
-    public String table(Model model, @RequestParam(value = "page", defaultValue = "0") Integer page,
+    public String table(Model model, @RequestParam(value = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "15") Integer size) {
         PaginationDTO paginationDTO = articleService.list(page, size);
         model.addAttribute("paginationDTO", paginationDTO);

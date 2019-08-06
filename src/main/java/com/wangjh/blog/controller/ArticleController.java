@@ -1,6 +1,8 @@
 package com.wangjh.blog.controller;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wangjh.blog.dto.CategoryDTO;
+import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.service.ArticleService;
@@ -12,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Controller
 public class ArticleController {
@@ -41,6 +40,7 @@ public class ArticleController {
 
     /**
      * 用户评论某一篇博客
+     *
      * @param articleId
      * @param content
      * @param request
@@ -55,6 +55,7 @@ public class ArticleController {
 
     /**
      * 根据文章 id 删除文章
+     *
      * @param articleId
      * @return
      */
@@ -66,6 +67,7 @@ public class ArticleController {
 
     /**
      * 查询博客的所有分类
+     *
      * @param model
      * @return
      */
@@ -78,27 +80,34 @@ public class ArticleController {
 
     /**
      * 根据 id 获取到某个分类下的所有博客文章，并将数据传递给展示页面
+     *
      * @param id
      * @return
      */
     @GetMapping("/category/{id}")
     public ModelAndView listByCategory(@PathVariable("id") Integer id) {
-        ModelAndView modelAndView = new ModelAndView("article-table-category-list");
-        // 根据 id 获取一个分类下的所有博客文章
+        ModelAndView modelAndView = new ModelAndView("article-table-category");
+        modelAndView.addObject("categoryId", id);
         CategoryDTO category = categories.get(id);
         List<Article> articles = articleService.listByCategory(category.getName());
         modelAndView.addObject("articles", articles);
-        // 通过 forward 定位到展示页面
-        modelAndView.setViewName("forward:/category/list");
+        modelAndView.setViewName("forward:/category/list/"+id);
         return modelAndView;
     }
 
     /**
      * 展示某个分类下的所有博客文章
+     *
      * @return
      */
-    @GetMapping("/category/list")
-    public String list() {
-        return "article-table-category-list";
+    @GetMapping("/category/list/{id}")
+    public ModelAndView list(@PathVariable("id") Integer id,
+                       @RequestParam(name = "page", defaultValue = "1") Integer page,
+                       @RequestParam(name = "size", defaultValue = "15") Integer size) {
+        ModelAndView modelAndView = new ModelAndView("article-table-category-list");
+        // 根据 id 获取一个分类下的所有博客文章
+        PaginationDTO<Article> paginationDTO = articleService.paginationByCategory(categories.get(id).getName(), page, size);
+        modelAndView.addObject("paginationDTO", paginationDTO);
+        return modelAndView;
     }
 }

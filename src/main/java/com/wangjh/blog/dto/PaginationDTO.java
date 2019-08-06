@@ -16,6 +16,11 @@ public class PaginationDTO<T> {
     /** 需要分类的 entity */
     private List<T> data;
 
+    /**
+     * 根据总页数和当前页数计算当前页面需要显示的页数
+     * @param totalPage
+     * @param page
+     */
     public void setPagination(Integer totalPage, Integer page) {
         this.totalPage = totalPage;
         this.page = page;
