@@ -21,3 +21,45 @@ function errorMessgae() {
 function modifiedUser() {
     alert("修改成功！")
 }
+
+function postComment() {
+    var articleId = $("#article_id").val();
+    var commentContent = $("#comment_content").val();
+    $.ajax({
+        type: "POST",
+        url: "/comment",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "articleId": articleId,
+            "content": commentContent
+        }),
+        success: function (response) {
+            window.location.reload();
+        },
+        dataType: "json"
+    });
+}
+
+function postReply(e) {
+    var articleId = $("#article_id").val();
+    var respondentId = $("#respondent_id").val();
+    var commentId = e.getAttribute("data-id");
+    var textareaId = "#reply-" + commentId;
+    var replyContent = $(textareaId).val();
+    $.ajax({
+        type: "POST",
+        url: "/reply",
+        contentType: "application/json",
+        data: JSON.stringify({
+            /* key 要与 CommentDTO 里面属性的名称一一对应 */
+            "commentId": commentId,
+            "articleId": articleId,
+            "respondentId": respondentId,
+            "content": replyContent
+        }),
+        success: function (response) {
+            window.location.reload();
+        },
+        dataType: "json"
+    });
+}

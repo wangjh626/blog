@@ -4,8 +4,6 @@ import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
-import org.apache.ibatis.annotations.Mapper;
-import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.jws.WebParam;
 import javax.servlet.http.HttpServletRequest;
-import java.awt.image.TileObserver;
-import java.security.interfaces.ECKey;
 
 @Controller
 public class PublishController {
@@ -92,7 +87,7 @@ public class PublishController {
      * @return
      */
     @GetMapping("/publish/{id}")
-    public String update(@PathVariable("id") Integer id, Model model) {
+    public String update(@PathVariable("id") Long id, Model model) {
         Article article = articleService.findById(id);
         model.addAttribute("title", article.getArticleTitle());
         model.addAttribute("category", article.getArticleCategories());
@@ -113,7 +108,7 @@ public class PublishController {
      * @return
      */
     @PostMapping("/publish/{id}")
-    public ModelAndView updateArticle(@PathVariable("id") Integer id, @RequestParam("title") String title,
+    public ModelAndView updateArticle(@PathVariable("id") Long id, @RequestParam("title") String title,
                                       @RequestParam("category") String category, @RequestParam("tags") String tags,
                                       @RequestParam("type") String type, @RequestParam("content") String content) {
         ModelAndView modelAndView = new ModelAndView("publish");

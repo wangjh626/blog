@@ -35,7 +35,7 @@ public class BlogApplicationTests {
     @Test
     public void jwt() {
         User user = new User();
-        user.setId(1);
+        user.setId(1L);
         user.setUsername("zzz");
         user.setPassword("940301");
         JWTCreator.Builder builder = JWT.create();

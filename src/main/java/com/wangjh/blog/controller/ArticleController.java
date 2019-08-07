@@ -1,6 +1,5 @@
 package com.wangjh.blog.controller;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.wangjh.blog.dto.CategoryDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
@@ -13,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -27,30 +25,24 @@ public class ArticleController {
     @Autowired
     private CommentService commentService;
 
+    /**
+     * 获取一篇博客下的所有评论，以及评论底下的回复
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping("/article/{id}")
-    public String artilce(@PathVariable("id") Integer id, Model model) {
+    public String artilce(@PathVariable("id") Long id, Model model) {
         // 根据博客 id 获取某一篇博客
         Article article = articleService.showArticle(id);
         model.addAttribute("article", article);
         // 获取某篇博客下的所有评论
-        List<Comment> comments = commentService.list(id);
+        List<Comment> comments = commentService.listComments(id);
         model.addAttribute("comments", comments);
+        // 获取评论下的所有回复
+        List<Comment> replies = commentService.listReplies(id);
+        model.addAttribute("replies", replies);
         return "article";
-    }
-
-    /**
-     * 用户评论某一篇博客
-     *
-     * @param articleId
-     * @param content
-     * @param request
-     * @return
-     */
-    @PostMapping("/article/{id}")
-    public String comment(@PathVariable("id") Integer articleId, @RequestParam("comment_content") String content,
-                          HttpServletRequest request) {
-        commentService.addComment(articleId, content, request);
-        return "redirect:/article/" + articleId;
     }
 
     /**
@@ -60,7 +52,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping("/delete/{id}")
-    public String deleteArticle(@PathVariable("id") Integer articleId) {
+    public String deleteArticle(@PathVariable("id") Long articleId) {
         articleService.deleteById(articleId);
         return "redirect:/articleTable";
     }
@@ -91,7 +83,7 @@ public class ArticleController {
         CategoryDTO category = categories.get(id);
         List<Article> articles = articleService.listByCategory(category.getName());
         modelAndView.addObject("articles", articles);
-        modelAndView.setViewName("forward:/category/list/"+id);
+        modelAndView.setViewName("forward:/category/listComments/"+id);
         return modelAndView;
     }
 

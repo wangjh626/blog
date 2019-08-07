@@ -51,11 +51,11 @@ public class ArticleService {
         articleMapper.insert(article);
     }
 
-    public Article showArticle(Integer id) {
+    public Article showArticle(Long id) {
         return articleMapper.selectByPrimaryKey(id);
     }
 
-    public void update(Integer id, String title, String category, String tags, String type, String content) {
+    public void update(Long id, String title, String category, String tags, String type, String content) {
         Article article = articleMapper.selectByPrimaryKey(id);
         article.setUpdateDate(System.currentTimeMillis());
         article.setArticleTitle(title);
@@ -71,11 +71,11 @@ public class ArticleService {
         articleMapper.updateByPrimaryKey(article);
     }
 
-    public Article findById(Integer id) {
+    public Article findById(Long id) {
         return articleMapper.selectByPrimaryKey(id);
     }
 
-//    public Page<Article> list(Integer page, Integer size) {
+//    public Page<Article> listComments(Integer page, Integer size) {
 //        PageHelper.startPage(page, size);
 //        return articleExtMapper.allArticle();
 //    }
@@ -135,7 +135,7 @@ public class ArticleService {
      * 根据文章 id 删除文章
      * @param articleId
      */
-    public void deleteById(Integer articleId) {
+    public void deleteById(Long articleId) {
         articleMapper.deleteByPrimaryKey(articleId);
     }
 

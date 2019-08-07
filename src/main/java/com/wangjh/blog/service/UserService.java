@@ -76,7 +76,7 @@ public class UserService {
      * @param avatar
      * @return
      */
-    public void modifyProfile(Integer id, String username, String email, String intro, String avatar) {
+    public void modifyProfile(Long id, String username, String email, String intro, String avatar) {
         User user = userMapper.selectByPrimaryKey(id);
         user.setUsername(username);
         user.setEmail(email);
@@ -85,4 +85,11 @@ public class UserService {
         userMapper.updateByPrimaryKey(user);
     }
 
+    /**
+     * 根据用户 id 获取用户
+     * @param id
+     */
+    public User findById(Long id) {
+        return userMapper.selectByPrimaryKey(id);
+    }
 }

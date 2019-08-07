@@ -6096,7 +6096,7 @@ a.am-close:hover {
 .am-list > li > .am-badge + .am-badge {
   margin-right: 5px;
 }
-/* Pure text list */
+/* Pure text listComments */
 .am-list-static > li {
   padding: .8rem .2rem;
 }
@@ -6334,7 +6334,7 @@ a.am-close:hover {
 .am-panel > .am-table-bd > tfoot > tr:last-child > th {
   border-bottom: 0;
 }
-/* Wrap list */
+/* Wrap listComments */
 .am-panel > .am-list {
   margin: 0;
 }
