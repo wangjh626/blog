@@ -53,6 +53,7 @@
 
         <div class="am-g">
             <div class="col-sm-12">
+                <!-- 如果文章为空，就展示所有分类 -->
                 <form class="am-form" th:if="${articles==null}">
                     <span th:each="category:${categories}">
                         <a th:text="${category.getName()}" th:href="@{'/category/'+${category.getId()}}"
@@ -60,6 +61,7 @@
                     </span>
                     <hr/>
                 </form>
+                <!-- 如果有文章，就展示文章-->
                 <form class="am-form" th:if="${articles!=null}">
                     <table class="am-table am-table-striped am-table-hover table-main">
                         <thead>

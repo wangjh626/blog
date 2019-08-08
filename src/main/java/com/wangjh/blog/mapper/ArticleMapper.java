@@ -3,6 +3,8 @@ package com.wangjh.blog.mapper;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.ArticleExample;
 import java.util.List;
+
+import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 

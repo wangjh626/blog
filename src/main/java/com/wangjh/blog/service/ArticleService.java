@@ -9,12 +9,19 @@ import com.wangjh.blog.entity.ArticleExample;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.ArticleExtMapper;
 import com.wangjh.blog.mapper.ArticleMapper;
+import com.wangjh.blog.util.RedisUtil;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ArticleService {
@@ -23,13 +30,19 @@ public class ArticleService {
     private ArticleMapper articleMapper;
 
     @Autowired
-    private ArticleExtMapper articleExtMapper;
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    private String key = "article";
 
     /**
      * 添加博客文章
-     * @param title     标题
-     * @param tags      标签
-     * @param content   博客内容
+     *
+     * @param title   标题
+     * @param tags    标签
+     * @param content 博客内容
      * @param user
      */
     public void insert(String title, String category, String tags, String type, String content, User user) {
@@ -51,10 +64,16 @@ public class ArticleService {
         articleMapper.insert(article);
     }
 
-    public Article showArticle(Long id) {
-        return articleMapper.selectByPrimaryKey(id);
-    }
-
+    /**
+     * 更新文章
+     *
+     * @param id
+     * @param title
+     * @param category
+     * @param tags
+     * @param type
+     * @param content
+     */
     public void update(Long id, String title, String category, String tags, String type, String content) {
         Article article = articleMapper.selectByPrimaryKey(id);
         article.setUpdateDate(System.currentTimeMillis());
@@ -71,23 +90,26 @@ public class ArticleService {
         articleMapper.updateByPrimaryKey(article);
     }
 
+    /**
+     * 根据 id 查询博客
+     *
+     * @param id
+     * @return
+     */
     public Article findById(Long id) {
         return articleMapper.selectByPrimaryKey(id);
     }
 
-//    public Page<Article> listComments(Integer page, Integer size) {
-//        PageHelper.startPage(page, size);
-//        return articleExtMapper.allArticle();
-//    }
-
     /**
      * 文章分页
+     *
      * @param page
      * @param size
      * @return
      */
     public PaginationDTO list(Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
+        List<Article> articles = new ArrayList<>();
 
         /* 总页数 */
         Integer totalPage;
@@ -97,14 +119,14 @@ public class ArticleService {
         // 获取所有文章
         ArticleExample articleExample = new ArticleExample();
         articleExample.createCriteria().andIdIsNotNull();
-        List<Article> articles = articleMapper.selectByExample(articleExample);
+        articles = articleMapper.selectByExample(articleExample);
 
         // 根据文章总数计算总页数
         totalCount = articles.size();
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
         } else {
-            totalPage = totalCount/ size + 1;
+            totalPage = totalCount / size + 1;
         }
 
         // 防止页面页数越界
@@ -133,6 +155,7 @@ public class ArticleService {
 
     /**
      * 根据文章 id 删除文章
+     *
      * @param articleId
      */
     public void deleteById(Long articleId) {
@@ -141,6 +164,7 @@ public class ArticleService {
 
     /**
      * 博客的所有分类
+     *
      * @return
      */
     public List<CategoryDTO> listCategories() {
@@ -168,6 +192,7 @@ public class ArticleService {
 
     /**
      * 根据 category 查找所有博客文章
+     *
      * @param category
      * @return
      */
@@ -236,7 +261,7 @@ public class ArticleService {
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
         } else {
-            totalPage = totalCount/ size + 1;
+            totalPage = totalCount / size + 1;
         }
 
         // 防止页面页数越界

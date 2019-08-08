@@ -5,6 +5,7 @@ import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.Comment;
+import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
 import com.wangjh.blog.service.UserService;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -39,7 +41,7 @@ public class ArticleController {
     @GetMapping("/article/{id}")
     public String artilce(@PathVariable("id") Long id, Model model) {
         // 根据博客 id 获取某一篇博客
-        Article article = articleService.showArticle(id);
+        Article article = articleService.findById(id);
         model.addAttribute("article", article);
         // 获取某篇博客下的所有评论
         List<CommentDTO> comments = commentService.listComments(id);
@@ -89,7 +91,7 @@ public class ArticleController {
         CategoryDTO category = categories.get(id);
         List<Article> articles = articleService.listByCategory(category.getName());
         modelAndView.addObject("articles", articles);
-        modelAndView.setViewName("forward:/category/listComments/"+id);
+        modelAndView.setViewName("forward:/category/list/"+id);
         return modelAndView;
     }
 
