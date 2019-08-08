@@ -57,7 +57,10 @@
         <div class="col-md-12" style="padding: 0;">
             <article class="am-comment" th:each="comment:${comments}"> <!-- 评论容器 -->
                 <a href="">
-                    <img class="am-comment-avatar" alt=""/> <!-- 评论者头像 -->
+                    <img class="am-comment-avatar"
+                         th:src="${comment.getUser().getAvatarImgUrl()!=null?comment.getUser().getAvatarImgUrl():'/images/avatar.png'}"/> <!--
+                     评论者头像
+                     -->
                 </a>
                 <div class="am-comment-main"> <!-- 评论内容容器 -->
                     <header class="am-comment-hd">
@@ -76,12 +79,13 @@
                     <div class="am-comment-bd" th:text="${comment.getCommentContent()}"></div>
                     <hr class="am-article-divider blog-hr">
                     <!-- 显示二级评论 -->
-                    <article class="am-comment" th:each="reply:${replies}" th:if="${reply.getpId()==comment.getId()}"
+                    <article class="am-comment" th:each="reply:${replies}"
+                             th:if="${comment.getId()==reply.getParentId()}"
                              style="margin: 0 10px;">
-                        <!--
-                     评论容器 -->
+                        <!-- 评论容器 -->
                         <a href="">
-                            <img class="am-comment-avatar" alt=""/> <!-- 评论者头像 -->
+                            <img class="am-comment-avatar"
+                                 th:src="${reply.getUser().getAvatarImgUrl()!=null?reply.getUser().getAvatarImgUrl():'/images/avatar.png'}"/> <!-- 评论者头像 -->
                         </a>
                         <div class="am-comment-main"> <!-- 评论内容容器 -->
                             <header class="am-comment-hd">

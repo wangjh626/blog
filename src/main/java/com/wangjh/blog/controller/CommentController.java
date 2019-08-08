@@ -28,6 +28,12 @@ public class CommentController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 添加评论
+     * @param commentDTO
+     * @param request
+     * @return
+     */
     @ResponseBody
     @PostMapping("/comment")
     public Object postComment(@RequestBody CommentDTO commentDTO, HttpServletRequest request) {
@@ -39,8 +45,9 @@ public class CommentController {
         // 文章作者
         Article article = articleService.findById(articleId);
         comment.setOriginalAuthor(article.getAuthor());
-        // 评论者 id
+        // 评论者
         User commentor = (User) request.getSession().getAttribute("user");
+        // 评论者 id
         comment.setAnswererId(commentor.getId());
         // 评论者用户名
         comment.setAnswererUsername(commentor.getUsername());
@@ -54,27 +61,34 @@ public class CommentController {
         // 评论点赞数
         comment.setLikes(0);
         // 评论内容
-        comment.setCommentContent(commentDTO.getContent());
+        comment.setCommentContent(commentDTO.getCommentContent());
         commentMapper.insert(comment);
         return ResultDTO.successOf();
     }
 
+    /**
+     * 添加回复
+     * @param commentDTO
+     * @param request
+     * @return
+     */
     @ResponseBody
     @PostMapping("/reply")
     public Object postReply(@RequestBody CommentDTO commentDTO, HttpServletRequest request) {
         // 创建一个新的回复
         Comment comment = new Comment();
         // 父 id
-        Long pId = commentDTO.getCommentId();
-        comment.setpId(pId);
+        Long pId = commentDTO.getParentId();
+        comment.setParentId(pId);
         // 被评论的文章 id
         Long articleId = commentDTO.getArticleId();
         comment.setArticleId(articleId);
         // 文章作者
         Article article = articleService.findById(articleId);
         comment.setOriginalAuthor(article.getAuthor());
-        // 评论者 id
+        // 评论者
         User commentor = (User) request.getSession().getAttribute("user");
+        // 评论者 id
         comment.setAnswererId(commentor.getId());
         // 评论者用户名
         comment.setAnswererUsername(commentor.getUsername());
@@ -88,8 +102,7 @@ public class CommentController {
         // 评论点赞数
         comment.setLikes(0);
         // 评论内容
-        System.out.println(commentDTO.getContent());
-        comment.setCommentContent(commentDTO.getContent());
+        comment.setCommentContent(commentDTO.getCommentContent());
         commentMapper.insert(comment);
         return ResultDTO.successOf();
     }

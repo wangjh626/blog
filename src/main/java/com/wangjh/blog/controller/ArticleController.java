@@ -1,11 +1,13 @@
 package com.wangjh.blog.controller;
 
 import com.wangjh.blog.dto.CategoryDTO;
+import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
+import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,9 @@ public class ArticleController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 获取一篇博客下的所有评论，以及评论底下的回复
      * @param id
@@ -37,23 +42,24 @@ public class ArticleController {
         Article article = articleService.showArticle(id);
         model.addAttribute("article", article);
         // 获取某篇博客下的所有评论
-        List<Comment> comments = commentService.listComments(id);
+        List<CommentDTO> comments = commentService.listComments(id);
         model.addAttribute("comments", comments);
         // 获取评论下的所有回复
-        List<Comment> replies = commentService.listReplies(id);
+        List<CommentDTO> replies = commentService.listReplies(id);
         model.addAttribute("replies", replies);
         return "article";
     }
 
     /**
      * 根据文章 id 删除文章
-     *
      * @param articleId
      * @return
      */
     @GetMapping("/delete/{id}")
     public String deleteArticle(@PathVariable("id") Long articleId) {
         articleService.deleteById(articleId);
+        // 删除文章的同时也要删除该文章下的所有评论
+        commentService.deleteAllComments(articleId);
         return "redirect:/articleTable";
     }
 

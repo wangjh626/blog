@@ -30,8 +30,8 @@ function postComment() {
         url: "/comment",
         contentType: "application/json",
         data: JSON.stringify({
-            "articleId": articleId,
-            "content": commentContent
+            articleId: articleId,
+            commentContent: commentContent
         }),
         success: function (response) {
             window.location.reload();
@@ -43,8 +43,8 @@ function postComment() {
 function postReply(e) {
     var articleId = $("#article_id").val();
     var respondentId = $("#respondent_id").val();
-    var commentId = e.getAttribute("data-id");
-    var textareaId = "#reply-" + commentId;
+    var parentId = e.getAttribute("data-id");
+    var textareaId = "#reply-" + parentId;
     var replyContent = $(textareaId).val();
     $.ajax({
         type: "POST",
@@ -52,10 +52,10 @@ function postReply(e) {
         contentType: "application/json",
         data: JSON.stringify({
             /* key 要与 CommentDTO 里面属性的名称一一对应 */
-            "commentId": commentId,
-            "articleId": articleId,
-            "respondentId": respondentId,
-            "content": replyContent
+            parentId: parentId,
+            articleId: articleId,
+            respondentId: respondentId,
+            commentContent: replyContent
         }),
         success: function (response) {
             window.location.reload();
