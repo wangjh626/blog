@@ -66,14 +66,17 @@ public class ArticleController {
     }
 
     /**
-     * 查询博客的所有分类
+     * 查询某个用户博客的所有分类
      *
      * @param model
      * @return
      */
     @GetMapping("/category")
-    public String category(Model model) {
-        categories = articleService.listCategories();
+    public String category(Model model, HttpServletRequest request) {
+        // 从 Session 中获取用户
+        User user = (User) request.getSession().getAttribute("user");
+        // 根据用户查询博客的所有分类
+        categories = articleService.listCategories(user.getUsername());
         model.addAttribute("categories", categories);
         return "article-table-category";
     }

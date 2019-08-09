@@ -163,15 +163,16 @@ public class ArticleService {
     }
 
     /**
-     * 博客的所有分类
+     * 某个用户博客的所有分类
      *
      * @return
+     * @param username
      */
-    public List<CategoryDTO> listCategories() {
+    public List<CategoryDTO> listCategories(String username) {
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
-        // 查询所有的博客
+        // 查询该用户所有的博客
         ArticleExample articleExample = new ArticleExample();
-        articleExample.createCriteria().andIdIsNotNull();
+        articleExample.createCriteria().andIdIsNotNull().andAuthorEqualTo(username);
         List<Article> articles = articleMapper.selectByExample(articleExample);
         // 将不重复的分类存入一个 ArrayLIst 中
         List<String> categories = new ArrayList<>();
