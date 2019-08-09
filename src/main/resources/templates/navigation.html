@@ -6,7 +6,6 @@
 <body>
 <div th:fragment="head">
     <meta charset="UTF-8">
-    <title>首頁 | Wangjh Blog</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -82,7 +81,9 @@
         <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
             <ul class="am-nav am-nav-pills am-topbar-nav">
                 <li th:class="${#httpServletRequest.getRequestURI()=='/'}?'am-active':''"><a href="/">首页</a></li>
-                <li th:class="${#httpServletRequest.getRequestURI()=='/publish'}?'am-active':''"><a href="#">项目</a></li>
+                <li
+                        th:class="${#httpServletRequest.getRequestURI()=='/categories'}?'am-active':''"><a
+                        href="/categories">分类</a></li>
                 <li class="am-dropdown" data-am-dropdown>
                     <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
                         下拉 <span class="am-icon-caret-down"></span>

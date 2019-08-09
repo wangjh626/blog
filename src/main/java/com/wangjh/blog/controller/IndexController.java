@@ -21,7 +21,7 @@ public class IndexController {
     @GetMapping
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "5") Integer size) {
-        PaginationDTO paginationDTO = articleService.list(page, size);
+        PaginationDTO paginationDTO = articleService.list(page, size, "");
         model.addAttribute("paginationDTO", paginationDTO);
         TagDTO tagDTO = new TagDTO();
         model.addAttribute("tagDTO", tagDTO);

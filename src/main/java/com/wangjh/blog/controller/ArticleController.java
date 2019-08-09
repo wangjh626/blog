@@ -1,10 +1,11 @@
 package com.wangjh.blog.controller;
 
+import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.dto.CategoryDTO;
 import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.PaginationDTO;
+import com.wangjh.blog.dto.TagDTO;
 import com.wangjh.blog.entity.Article;
-import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
@@ -34,6 +35,7 @@ public class ArticleController {
 
     /**
      * 获取一篇博客下的所有评论，以及评论底下的回复
+     *
      * @param id
      * @param model
      * @return
@@ -53,25 +55,79 @@ public class ArticleController {
     }
 
     /**
-     * 根据文章 id 删除文章
+     * 导航栏 --- 分类
+     * @param page
+     * @param size
+     * @param model
+     * @param request
+     * @return
+     */
+    @GetMapping("/categories")
+    public String categories(@RequestParam(name = "page", defaultValue = "1") Integer page,
+                             @RequestParam(name = "size", defaultValue = "10") Integer size,
+                             Model model, HttpServletRequest request) {
+        // 所有分类
+        categories = articleService.listCategories();
+        model.addAttribute("categories", categories);
+
+        Object id = request.getSession().getAttribute("id");
+        request.getSession().removeAttribute("id");
+        String category = null;
+        if (id != null) {
+            CategoryDTO categoryDTO = categories.get((Integer) id);
+            category = categoryDTO.getName();
+        }
+        // 所有文章进行分页
+        PaginationDTO paginationDTO;
+        if (StringUtils.isEmpty(category)) {
+            paginationDTO = articleService.list(page, size, "");
+        } else {
+            paginationDTO = articleService.list(page, size, category);
+        }
+        model.addAttribute("paginationDTO", paginationDTO);
+        // 文章标签
+        TagDTO tagDTO = new TagDTO();
+        model.addAttribute("tagDTO", tagDTO);
+        return "categories";
+    }
+
+    /**
+     * 导航栏 --- 分类（根据分类展示博客文章）
+     * @param id
+     * @param request
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/categories/{id}")
+    public String category(@PathVariable("id") Integer id, HttpServletRequest request,
+                           @RequestParam(name = "page", defaultValue = "1") Integer page,
+                           @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        request.getSession().setAttribute("id", id);
+        return "forward:/categories";
+    }
+
+    /**
+     * 在控制台根据文章 id 删除文章
+     *
      * @param articleId
      * @return
      */
-    @GetMapping("/delete/{id}")
+    @GetMapping("/admin/delete/{id}")
     public String deleteArticle(@PathVariable("id") Long articleId) {
         articleService.deleteById(articleId);
         // 删除文章的同时也要删除该文章下的所有评论
         commentService.deleteAllComments(articleId);
-        return "redirect:/articleTable";
+        return "redirect:/admin/articleTable";
     }
 
     /**
-     * 查询某个用户博客的所有分类
+     * 在控制台查询某个用户博客的所有分类
      *
      * @param model
      * @return
      */
-    @GetMapping("/category")
+    @GetMapping("/admin/category")
     public String category(Model model, HttpServletRequest request) {
         // 从 Session 中获取用户
         User user = (User) request.getSession().getAttribute("user");
@@ -82,31 +138,31 @@ public class ArticleController {
     }
 
     /**
-     * 根据 id 获取到某个分类下的所有博客文章，并将数据传递给展示页面
+     * 在控制台根据 id 获取到某个分类下的所有博客文章，并将数据传递给展示页面
      *
      * @param id
      * @return
      */
-    @GetMapping("/category/{id}")
+    @GetMapping("/admin/category/{id}")
     public ModelAndView listByCategory(@PathVariable("id") Integer id) {
         ModelAndView modelAndView = new ModelAndView("article-table-category");
         modelAndView.addObject("categoryId", id);
         CategoryDTO category = categories.get(id);
         List<Article> articles = articleService.listByCategory(category.getName());
         modelAndView.addObject("articles", articles);
-        modelAndView.setViewName("forward:/category/list/"+id);
+        modelAndView.setViewName("forward:/admin/category/list/" + id);
         return modelAndView;
     }
 
     /**
-     * 展示某个分类下的所有博客文章
+     * 在控制台展示某个分类下的所有博客文章
      *
      * @return
      */
-    @GetMapping("/category/list/{id}")
+    @GetMapping("/admin/category/list/{id}")
     public ModelAndView list(@PathVariable("id") Integer id,
-                       @RequestParam(name = "page", defaultValue = "1") Integer page,
-                       @RequestParam(name = "size", defaultValue = "15") Integer size) {
+                             @RequestParam(name = "page", defaultValue = "1") Integer page,
+                             @RequestParam(name = "size", defaultValue = "15") Integer size) {
         ModelAndView modelAndView = new ModelAndView("article-table-category-list");
         // 根据 id 获取一个分类下的所有博客文章
         PaginationDTO<Article> paginationDTO = articleService.paginationByCategory(categories.get(id).getName(), page, size);

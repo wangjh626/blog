@@ -56,7 +56,7 @@
                 <!-- 如果文章为空，就展示所有分类 -->
                 <form class="am-form" th:if="${articles==null}">
                     <span th:each="category:${categories}">
-                        <a th:text="${category.getName()}" th:href="@{'/category/'+${category.getId()}}"
+                        <a th:text="${category.getName()}" th:href="@{'/admin/category/'+${category.getId()}}"
                            class="am-icon-folder" style="margin: 5px"></a>
                     </span>
                     <hr/>
@@ -95,7 +95,7 @@
                                             </a>
                                         </button>
                                         <button class="am-btn am-btn-default am-btn-xs">
-                                            <a th:href="@{'/delete/'+${article.getId()}}" style="color: #dd514c;">
+                                            <a th:href="@{'/admin/delete/'+${article.getId()}}" style="color: #dd514c;">
                                                 <span class="am-icon-trash-o"></span> 删除
                                             </a>
                                         </button>

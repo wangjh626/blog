@@ -1,27 +1,18 @@
 package com.wangjh.blog.service;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+
 import com.wangjh.blog.dto.CategoryDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.ArticleExample;
 import com.wangjh.blog.entity.User;
-import com.wangjh.blog.mapper.ArticleExtMapper;
 import com.wangjh.blog.mapper.ArticleMapper;
-import com.wangjh.blog.util.RedisUtil;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ArticleService {
@@ -29,13 +20,60 @@ public class ArticleService {
     @Autowired
     private ArticleMapper articleMapper;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    /**
+     * 添加文章或者更新文章时设置文章的属性
+     * @param article
+     * @param title
+     * @param category
+     * @param tags
+     * @param type
+     * @param content
+     */
+    public void setArticleAttributes(Article article, String title, String category, String tags, String type, String content) {
+        article.setArticleTitle(title);
+        article.setArticleCategories(category);
+        article.setArticleTags(tags);
+        article.setArticleType(type);
+        article.setArticleContent(content);
+        if (StringUtils.length(content) >= 200) {
+            article.setArticleTabloid(content.substring(0, 200));
+        } else {
+            article.setArticleTabloid(content);
+        }
+    }
 
-    @Autowired
-    private RedisUtil redisUtil;
+    /**
+     * 根据文章总数计算总页数
+     * @param size
+     * @param totalCount
+     * @return
+     */
+    public Integer totalPage(Integer size, Integer totalCount) {
+        /* 文章总数 */
+        Integer totalPage;
+        // 根据文章总数计算总页数
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+        return totalPage;
+    }
 
-    private String key = "article";
+    /**
+     * 设置页数，防止页数越界
+     * @param totalPage
+     * @return
+     */
+    public Integer setPage(Integer page, Integer totalPage) {
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+        return page;
+    }
 
     /**
      * 添加博客文章
@@ -48,16 +86,7 @@ public class ArticleService {
     public void insert(String title, String category, String tags, String type, String content, User user) {
         Article article = new Article();
         article.setAuthor(user.getUsername());
-        article.setArticleTitle(title);
-        article.setArticleCategories(category);
-        article.setArticleTags(tags);
-        article.setArticleType(type);
-        article.setArticleContent(content);
-        if (StringUtils.length(content) >= 200) {
-            article.setArticleTabloid(content.substring(0, 200));
-        } else {
-            article.setArticleTabloid(content);
-        }
+        setArticleAttributes(article, title, category, tags, type, content);
         article.setPublishDate(System.currentTimeMillis());
         article.setUpdateDate(article.getPublishDate());
         article.setLikes(0);
@@ -77,16 +106,7 @@ public class ArticleService {
     public void update(Long id, String title, String category, String tags, String type, String content) {
         Article article = articleMapper.selectByPrimaryKey(id);
         article.setUpdateDate(System.currentTimeMillis());
-        article.setArticleTitle(title);
-        article.setArticleCategories(category);
-        article.setArticleTags(tags);
-        article.setArticleType(type);
-        article.setArticleContent(content);
-        if (StringUtils.length(content) >= 200) {
-            article.setArticleTabloid(content.substring(0, 200));
-        } else {
-            article.setArticleTabloid(content);
-        }
+        setArticleAttributes(article, title, category, tags, type, content);
         articleMapper.updateByPrimaryKey(article);
     }
 
@@ -107,45 +127,44 @@ public class ArticleService {
      * @param size
      * @return
      */
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(Integer page, Integer size, String category) {
         PaginationDTO paginationDTO = new PaginationDTO();
         List<Article> articles = new ArrayList<>();
 
         /* 总页数 */
         Integer totalPage;
-        /* 文章总数 */
-        Integer totalCount;
 
         // 获取所有文章
         ArticleExample articleExample = new ArticleExample();
-        articleExample.createCriteria().andIdIsNotNull();
+        if (StringUtils.isEmpty(category)) {
+            articleExample.createCriteria().andIdIsNotNull();
+        } else {
+            articleExample.createCriteria().andArticleCategoriesEqualTo(category);
+        }
         articles = articleMapper.selectByExample(articleExample);
 
         // 根据文章总数计算总页数
-        totalCount = articles.size();
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
+        totalPage = totalPage(size, articles.size());
 
         // 防止页面页数越界
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
+        page = setPage(page, totalPage);
 
         // 根据总页数和当前页数计算当前页面需要显示的页数
         paginationDTO.setPagination(totalPage, page);
         // 将所有文章按时间倒序排序
-        ArticleExample example = new ArticleExample();
-        example.createCriteria().andIdIsNotNull();
-        example.setOrderByClause("publish_date desc");
-        // 得到某一页的文章
-        List<Article> articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * size,
-                size));
+        List<Article> articleList;
+        if (StringUtils.isEmpty(category)) {
+            ArticleExample example = new ArticleExample();
+            example.createCriteria().andIdIsNotNull();
+            example.setOrderByClause("publish_date desc");
+            // 得到某一页的文章
+            articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * size,
+                    size));
+        } else {
+            articleExample.setOrderByClause("publish_date desc");
+            articleList = articleMapper.selectByExampleWithRowbounds(articleExample, new RowBounds((page - 1) * size,
+                    size));
+        }
         for (Article article : articleList) {
             String[] strings = article.getArticleTags().split(",");
         }
@@ -160,6 +179,38 @@ public class ArticleService {
      */
     public void deleteById(Long articleId) {
         articleMapper.deleteByPrimaryKey(articleId);
+    }
+
+    /**
+     * 查询博客的所有分类
+     * @return
+     */
+    public List<CategoryDTO> listCategories() {
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        // 查询该用户所有的博客
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andIdIsNotNull();
+        List<Article> articles = articleMapper.selectByExample(articleExample);
+        // 将不重复的分类存入一个 ArrayLIst 中
+        List<String> categories = new ArrayList<>();
+        for (Article article : articles) {
+            if (!categories.contains(article.getArticleCategories())) {
+                categories.add(article.getArticleCategories());
+            }
+        }
+        // 得到一个 CategoryDTO 的 List
+        for (int i = 0; i < categories.size(); i++) {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setId(i);
+            categoryDTO.setName(categories.get(i));
+            // 查询某一个分类下的文章数量
+            ArticleExample example = new ArticleExample();
+            example.createCriteria().andArticleCategoriesEqualTo(categories.get(i));
+            List<Article> articleList = articleMapper.selectByExample(example);
+            categoryDTO.setCount(articleList.size());
+            categoryDTOList.add(categoryDTO);
+        }
+        return categoryDTOList;
     }
 
     /**
@@ -186,6 +237,11 @@ public class ArticleService {
             CategoryDTO categoryDTO = new CategoryDTO();
             categoryDTO.setId(i);
             categoryDTO.setName(categories.get(i));
+            // 查询某一个分类下的文章数量
+            ArticleExample example = new ArticleExample();
+            example.createCriteria().andArticleCategoriesEqualTo(categories.get(i));
+            List<Article> articleList = articleMapper.selectByExample(example);
+            categoryDTO.setCount(articleList.size());
             categoryDTOList.add(categoryDTO);
         }
         return categoryDTOList;
@@ -204,13 +260,18 @@ public class ArticleService {
         return articles;
     }
 
+    /**
+     * 根据分类进行文章的分页
+     * @param category
+     * @param page
+     * @param size
+     * @return
+     */
     public PaginationDTO<Article> paginationByCategory(String category, Integer page, Integer size) {
         PaginationDTO<Article> paginationDTO = new PaginationDTO<>();
 
         /* 总页数 */
         Integer totalPage;
-        /* 文章总数 */
-        Integer totalCount;
 
         // 获取所有分类为 category 的文章
         ArticleExample example = new ArticleExample();
@@ -218,20 +279,10 @@ public class ArticleService {
         List<Article> articles = articleMapper.selectByExample(example);
 
         // 根据文章总数计算总页数
-        totalCount = articles.size();
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
+        totalPage = totalPage(size, articles.size());
 
         // 防止页面页数越界
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
+        page = setPage(page, totalPage);
 
         // 得到某一页的文章
         ArticleExample articleExample = new ArticleExample();
@@ -244,13 +295,18 @@ public class ArticleService {
         return paginationDTO;
     }
 
+    /**
+     * 显示某个用户的所有博客
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
     public PaginationDTO listByUsername(String username, Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
 
         /* 总页数 */
         Integer totalPage;
-        /* 文章总数 */
-        Integer totalCount;
 
         // 获取所有文章
         ArticleExample articleExample = new ArticleExample();
@@ -258,20 +314,10 @@ public class ArticleService {
         List<Article> articles = articleMapper.selectByExample(articleExample);
 
         // 根据文章总数计算总页数
-        totalCount = articles.size();
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
+        totalPage = totalPage(size, articles.size());
 
         // 防止页面页数越界
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
+        page = setPage(page, totalPage);
 
         // 根据总页数和当前页数计算当前页面需要显示的页数
         paginationDTO.setPagination(totalPage, page);

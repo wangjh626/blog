@@ -18,7 +18,15 @@ public class TableController {
     @Autowired
     private ArticleService articleService;
 
-    @GetMapping("/articleTable")
+    /**
+     * 在控制台显示某个用户的所有文章
+     * @param model
+     * @param page
+     * @param size
+     * @param request
+     * @return
+     */
+    @GetMapping("/admin/articleTable")
     public String table(Model model, @RequestParam(value = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "15") Integer size, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:insert="~{navigation::head}"></div>
+<title>分类 | Wangjh Blog</title>
+<link rel="stylesheet" href="/css/editormd.preview.css"/>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/editormd.js"></script>
+<script src="/js/lib/marked.min.js"></script>
+<script src="/js/lib/prettify.min.js"></script>
+<body>
+<div th:insert="~{navigation::navition}"></div>
+<div class="am-g am-g-fixed blog-g-fixed">
+    <div class="col-md-3 blog-sidebar">
+        <div th:each="category:${categories}">
+            <div style="margin-top: 6px;padding: 3px;">
+                <span>
+                    <a th:text="${category.getName()}" th:href="${'/categories/'+category.getId()}" style="padding-bottom:
+                    2px;color: #616161;border-bottom: 1px solid #999;margin-left: 155px"></a>
+                    <span style="color: #b0b0b0;" th:text="'('+${category.getCount()}+')'"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6" style="margin-right: 295px">
+        <div class="am-panel am-panel-default" th:each="article:${paginationDTO.getData()}">
+            <div class="am-panel-bd" style="padding: 5px;box-shadow: 5px 5px 5px #888888;">
+                <article class="" >
+                    <h4 class="am-article-title">
+                        <a th:text="${article.getArticleTitle()}" th:href="@{'/article/'+${article.getId()}}"
+                           style="font-size: 17px; color: #7f7f7f;" target="_blank"></a>
+                    </h4>
+                    <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
+                    <span class="am-badge am-badge-success" th:text="${article.getArticleType()}"
+                          style="font-size: 10px"></span>
+                    <span class="am-icon-calendar" style="color: #7f7f7f;font-size: 13px"
+                          th:text="${#dates.format(article.getPublishDate(), 'yyyy-MM-dd')}"></span>
+                    <span class="am-icon-folder" style="color: #7f7f7f;font-size: 13px"
+                          th:text="${article.getArticleCategories()}"></span>
+                    <span th:each="tag:${tagDTO.getArticleTags(article)}" style="color: #7f7f7f;font-size: 13px">
+                        <i class="am-icon-tag">
+                            <span th:text="${tag}"></span>
+                        </i>
+                    </span>
+                </article>
+            </div>
+        </div>
+
+        <div>
+
+        </div>
+        <ul class="am-pagination am-pagination-centered">
+            <li><a th:if="${paginationDTO.getPage()!=1}"
+                   th:href="@{${#httpServletRequest.getContextPath()}+'?page='+${paginationDTO.getPage()-1}}">上一页</a>
+            </li>
+            <li th:each="page:${paginationDTO.getPages()}"
+                th:class="${paginationDTO.getPage()==page}?'am-active':''">
+                <a th:href="@{${#httpServletRequest.getContextPath()}+'?page='+${page}}" th:text="${page}"></a>
+            </li>
+            <li><a th:if="${paginationDTO.getPage()!=paginationDTO.getTotalPage()}"
+                   th:href="@{${#httpServletRequest.getContextPath()}+'?page='+${paginationDTO.getPage()+1}}">下一页
+            </a></li>
+        </ul>
+    </div>
+</div>
+<footer class="blog-footer">
+    <p>blog template<br/>
+        <small>© Copyright XXX. by the AmazeUI Team.</small>
+    </p>
+</footer>
+
+<script src="/js/zepto.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+</body>
+</html>

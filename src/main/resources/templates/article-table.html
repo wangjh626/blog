@@ -86,7 +86,7 @@
                                             </a>
                                         </button>
                                         <button class="am-btn am-btn-default am-btn-xs">
-                                            <a th:href="@{'/delete/'+${article.getId()}}" style="color: #dd514c;">
+                                            <a th:href="@{'/admin/delete/'+${article.getId()}}" style="color: #dd514c;">
                                                 <span class="am-icon-trash-o"></span> 删除
                                             </a>
                                         </button>
@@ -101,14 +101,14 @@
                         <div class="am-fr">
                             <ul class="am-pagination">
                                 <li><a th:if="${paginationDTO.getPage()!=1}"
-                                       th:href="@{'/articleTable/?page='+${paginationDTO.getPage()-1}}">上一页</a>
+                                       th:href="@{'/admin/articleTable/?page='+${paginationDTO.getPage()-1}}">上一页</a>
                                 </li>
                                 <li th:each="page:${paginationDTO.getPages()}" >
-                                    <a th:href="@{'/articleTable/?page='+${page}}" th:text="${page}"
+                                    <a th:href="@{'/admin/articleTable/?page='+${page}}" th:text="${page}"
                                        th:style="${paginationDTO.getPage()==page}?'color:#fff;background-color:#0e90d2':''"></a>
                                 </li>
                                 <li><a th:if="${paginationDTO.getPage()!=paginationDTO.getTotalPage()}"
-                                       th:href="@{'/articleTable/?page='+${paginationDTO.getPage()+1}}">下一页</a>
+                                       th:href="@{'/admin/articleTable/?page='+${paginationDTO.getPage()+1}}">下一页</a>
                                 </li>
                             </ul>
                         </div>
