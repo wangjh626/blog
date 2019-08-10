@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class ArticleController {
@@ -29,9 +31,6 @@ public class ArticleController {
 
     @Autowired
     private CommentService commentService;
-
-    @Autowired
-    private UserService userService;
 
     /**
      * 获取一篇博客下的所有评论，以及评论底下的回复

@@ -63,3 +63,20 @@ function postReply(e) {
         dataType: "json"
     });
 }
+
+function leaveMessage() {
+    var message = $("#message_content").val();
+    $.ajax({
+        type: "POST",
+        url: "/tags",
+        contentType: "application/json",
+        data: JSON.stringify({
+            /* key 要与 CommentDTO 里面属性的名称一一对应 */
+            commentContent: message
+        }),
+        success: function (response) {
+            window.location.reload();
+        },
+        dataType: "json"
+    });
+}

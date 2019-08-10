@@ -10,4 +10,6 @@ public interface ArticleExtMapper {
 
     @Select("select * from article order by publish_date desc")
     Page<Article> allArticle();
+
+
 }

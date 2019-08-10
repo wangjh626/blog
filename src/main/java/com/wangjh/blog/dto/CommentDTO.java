@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class CommentDTO {
     private Long id;
-    /** 为什么使用 pId 就不行了呢 */
     private Long parentId;
     private Long articleId;
     private String originalAuthor;

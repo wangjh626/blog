@@ -334,4 +334,52 @@ public class ArticleService {
         paginationDTO.setData(articleList);
         return paginationDTO;
     }
+
+    /**
+     * 查询所有文章
+     * @return
+     */
+    public List<Article> findAll() {
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andIdIsNotNull();
+        return articleMapper.selectByExample(articleExample);
+    }
+
+    /**
+     * 根据标签查询文章
+     * @param tag
+     * @param page
+     * @param size
+     * @return
+     */
+    public PaginationDTO findByTag(String tag, Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+
+        /* 总页数 */
+        Integer totalPage;
+
+        ArticleExample articleExample = new ArticleExample();
+        // MySQL 查询字段中包含某字符串使用 %query%
+        articleExample.createCriteria().andArticleTagsLike("%" + tag + "%");
+        List<Article> articles = articleMapper.selectByExample(articleExample);
+
+        // 根据文章总数计算总页数
+        totalPage = totalPage(size, articles.size());
+
+        // 防止页面页数越界
+        page = setPage(page, totalPage);
+
+        // 根据总页数和当前页数计算当前页面需要显示的页数
+        paginationDTO.setPagination(totalPage, page);
+        // 将所有文章按时间倒序排序
+        articleExample.setOrderByClause("publish_date desc");
+        // 得到某一页的文章
+        List<Article> articleList = articleMapper.selectByExampleWithRowbounds(articleExample, new RowBounds((page - 1) * size,
+                size));
+        for (Article article : articleList) {
+            String[] strings = article.getArticleTags().split(",");
+        }
+        paginationDTO.setData(articleList);
+        return paginationDTO;
+    }
 }
