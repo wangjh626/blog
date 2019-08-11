@@ -105,6 +105,7 @@ public class CommentService {
     public List<CommentDTO> listMessage() {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andParentIdIsNull().andArticleIdIsNull();
+        commentExample.setOrderByClause("comment_date desc");
         List<Comment> comments = commentMapper.selectByExample(commentExample);
         Set<Long> commentorsId = comments.stream().map(comment -> comment.getAnswererId()).collect(Collectors.toSet());
         List<Long> userIds = new ArrayList<>();

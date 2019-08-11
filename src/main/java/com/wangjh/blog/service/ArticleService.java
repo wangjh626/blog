@@ -262,10 +262,10 @@ public class ArticleService {
 
     /**
      * 根据分类进行文章的分页
-     * @param category
-     * @param page
-     * @param size
-     * @return
+     * @param category 分类
+     * @param page 页数
+     * @param size 每页文章总数
+     * @return 文章分页
      */
     public PaginationDTO<Article> paginationByCategory(String category, Integer page, Integer size) {
         PaginationDTO<Article> paginationDTO = new PaginationDTO<>();

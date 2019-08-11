@@ -9,7 +9,6 @@ import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
-import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 public class ArticleController {
@@ -137,28 +134,11 @@ public class ArticleController {
     }
 
     /**
-     * 在控制台根据 id 获取到某个分类下的所有博客文章，并将数据传递给展示页面
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/admin/category/{id}")
-    public ModelAndView listByCategory(@PathVariable("id") Integer id) {
-        ModelAndView modelAndView = new ModelAndView("article-table-category");
-        modelAndView.addObject("categoryId", id);
-        CategoryDTO category = categories.get(id);
-        List<Article> articles = articleService.listByCategory(category.getName());
-        modelAndView.addObject("articles", articles);
-        modelAndView.setViewName("forward:/admin/category/list/" + id);
-        return modelAndView;
-    }
-
-    /**
      * 在控制台展示某个分类下的所有博客文章
      *
      * @return
      */
-    @GetMapping("/admin/category/list/{id}")
+    @GetMapping("/admin/category/{id}")
     public ModelAndView list(@PathVariable("id") Integer id,
                              @RequestParam(name = "page", defaultValue = "1") Integer page,
                              @RequestParam(name = "size", defaultValue = "15") Integer size) {

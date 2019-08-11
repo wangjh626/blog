@@ -2,6 +2,7 @@ package com.wangjh.blog.controller;
 
 import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.PaginationDTO;
+import com.wangjh.blog.dto.ResultDTO;
 import com.wangjh.blog.dto.TagDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.Comment;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
@@ -55,8 +57,6 @@ public class TagController {
                 }
             }
             model.addAttribute("tags", allTag);
-            List<CommentDTO> messages = commentService.listMessage();
-            model.addAttribute("messages", messages);
         } else {
             PaginationDTO paginationDTO = articleService.findByTag(tag, page, size);
             model.addAttribute("paginationDTO", paginationDTO);
@@ -65,26 +65,5 @@ public class TagController {
             model.addAttribute("tagName", tag);
         }
         return "tags";
-    }
-
-    /**
-     * 导航栏 --- 标签页下的留言
-     * @return
-     */
-    @PostMapping("/tags")
-    public String leaveMessages(@RequestBody CommentDTO commentDTO, HttpServletRequest request) {
-        Comment comment = new Comment();
-        // 获取回复用户
-        User user = (User) request.getSession().getAttribute("user");
-        // 设置回复用户 id
-        comment.setAnswererId(user.getId());
-        // 设置回复用户的 username
-        comment.setAnswererUsername(user.getUsername());
-        comment.setCommentDate(System.currentTimeMillis());
-        comment.setLikes(0);
-        // 设置回复内容
-        comment.setCommentContent(commentDTO.getCommentContent());
-        commentMapper.insert(comment);
-        return "forward:/tags";
     }
 }
