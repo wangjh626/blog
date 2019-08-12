@@ -25,7 +25,7 @@ public class ProfileController {
                          HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         userService.modifyProfile(user.getId(), username, email, intro, avatar);
-        return "redirect:/admin-user";
+        return "redirect:/admin/user";
     }
 
 }

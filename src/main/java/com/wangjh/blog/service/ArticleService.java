@@ -22,6 +22,7 @@ public class ArticleService {
 
     /**
      * 添加文章或者更新文章时设置文章的属性
+     *
      * @param article
      * @param title
      * @param category
@@ -44,6 +45,7 @@ public class ArticleService {
 
     /**
      * 根据文章总数计算总页数
+     *
      * @param size
      * @param totalCount
      * @return
@@ -62,6 +64,7 @@ public class ArticleService {
 
     /**
      * 设置页数，防止页数越界
+     *
      * @param totalPage
      * @return
      */
@@ -183,6 +186,7 @@ public class ArticleService {
 
     /**
      * 查询博客的所有分类
+     *
      * @return
      */
     public List<CategoryDTO> listCategories() {
@@ -216,8 +220,8 @@ public class ArticleService {
     /**
      * 某个用户博客的所有分类
      *
-     * @return
      * @param username
+     * @return
      */
     public List<CategoryDTO> listCategories(String username) {
         List<CategoryDTO> categoryDTOList = new ArrayList<>();
@@ -262,9 +266,10 @@ public class ArticleService {
 
     /**
      * 根据分类进行文章的分页
+     *
      * @param category 分类
-     * @param page 页数
-     * @param size 每页文章总数
+     * @param page     页数
+     * @param size     每页文章总数
      * @return 文章分页
      */
     public PaginationDTO<Article> paginationByCategory(String category, Integer page, Integer size) {
@@ -297,6 +302,7 @@ public class ArticleService {
 
     /**
      * 显示某个用户的所有博客
+     *
      * @param username
      * @param page
      * @param size
@@ -337,6 +343,7 @@ public class ArticleService {
 
     /**
      * 查询所有文章
+     *
      * @return
      */
     public List<Article> findAll() {
@@ -347,6 +354,7 @@ public class ArticleService {
 
     /**
      * 根据标签查询文章
+     *
      * @param tag
      * @param page
      * @param size
@@ -381,5 +389,16 @@ public class ArticleService {
         }
         paginationDTO.setData(articleList);
         return paginationDTO;
+    }
+
+    /**
+     * 查询某个用户的所有文章
+     *
+     * @return
+     */
+    public List<Article> findAllByUser(String username) {
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andAuthorEqualTo(username);
+        return articleMapper.selectByExample(articleExample);
     }
 }
