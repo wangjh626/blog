@@ -15,7 +15,8 @@ public class LogoutController {
     @GetMapping
     public String logout(HttpServletResponse response, HttpServletRequest request) {
         request.getSession().removeAttribute("user");
-        Cookie cookie = new Cookie("token", null);
+//        Cookie cookie = new Cookie("token", null);
+        Cookie cookie = new Cookie("JSESSIONID", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);

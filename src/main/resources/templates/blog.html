@@ -65,7 +65,7 @@
                 <div>
                     <span th:each="tag:${tagDTO.getArticleTags(article)}">
                         <i class="am-icon-tag am-btn am-btn-primary am-round am-btn-xs">
-                            <span th:text="${tag}"></span>
+                            <a th:text="${tag}" th:href="@{'/tags?tag='+${tag}}" style="color: white;"></a>
                         </i>
                     </span>
                 </div>

@@ -6,8 +6,14 @@ import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.UserMapper;
 import com.wangjh.blog.service.UserService;
 import com.wangjh.blog.util.JwtUtil;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,46 +47,89 @@ public class LoginController {
     }
 
     /**
+     * Shiro 的登录验证
+     *
+     * @param phone
+     * @param password
+     * @param model
+     * @return
+     */
+    @PostMapping("/login")
+    public String login(@RequestParam("phone") String phone, @RequestParam("password") String password, Model model,
+                        HttpServletRequest request) {
+        if (StringUtils.isEmpty(phone)) {
+            model.addAttribute("errorMessage", "请输入账号");
+            return "login";
+        }
+        if (StringUtils.isEmpty(password)) {
+            model.addAttribute("errorMessage", "请输入密码");
+            // 如果没有输入密码则提示，并且回显已经输入的手机号
+            model.addAttribute("phone", phone);
+            return "login";
+        }
+        // 1. 获取 Subject
+        Subject subject = SecurityUtils.getSubject();
+        // 2. 封装用户数据
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(phone, password);
+        // 3. 执行登录方法
+        try {
+            subject.login(usernamePasswordToken);
+            // 登录成功
+            User user = userService.findByPhone(usernamePasswordToken.getUsername());
+            request.getSession().setAttribute("user", user);
+            return "redirect:/";
+        } catch (UnknownAccountException e) {
+            model.addAttribute("errorMessage", "账号不存在");
+            return "login";
+        } catch (IncorrectCredentialsException e) {
+            model.addAttribute("errorMessage", "密码错误");
+            // 如果密码输入错误则提示，并且回显已经输入的手机号
+            model.addAttribute("phone", phone);
+            return "login";
+        }
+    }
+
+    /**
      * 实现用户登录功能
      * @param phone
      * @param password
      * @return
      */
-    @PostMapping("/login")
-    public ModelAndView login(@RequestParam("phone") String phone, @RequestParam("password") String password,
-                              HttpServletRequest request, HttpServletResponse response) {
-        ModelAndView modelAndView = new ModelAndView("login");
-
-        if (StringUtils.isEmpty(phone)) {
-            modelAndView.addObject("errorMessage", "请输入手机号");
-            return modelAndView;
-        } else {
-            modelAndView.addObject("phone", phone);
-        }
-
-        if (StringUtils.isEmpty(password)) {
-            modelAndView.addObject("errorMessage", "请输入密码");
-            return modelAndView;
-        } else {
-            // 根据手机和密码从数据库或查询用户
-            UserExample userExample = new UserExample();
-            userExample.createCriteria().andPhoneEqualTo(phone).andPasswordEqualTo(password);
-            List<User> users = userMapper.selectByExample(userExample);
-            // 如果用户存在，则跳转到博客首页，否则提示错误
-            if (users.size() != 0) {
-                User user = users.get(0);
-                request.getSession().setAttribute("user", user);
-                String token = jwtUtil.createToken(user);
-                userService.updateToken(user, token);
-                Cookie cookie = new Cookie("token", token);
-                cookie.setPath("/");
-                response.addCookie(cookie);
-                modelAndView.setViewName("redirect:/");
-                return modelAndView;
-            } else {
-                modelAndView.addObject("errorMessage", "手机或密码输入错误");
-                return modelAndView;
-            }
-        }
-    }
+//    @PostMapping("/login")
+//    public ModelAndView login(@RequestParam("phone") String phone, @RequestParam("password") String password,
+//                              HttpServletRequest request, HttpServletResponse response) {
+//        ModelAndView modelAndView = new ModelAndView("login");
+//
+//        if (StringUtils.isEmpty(phone)) {
+//            modelAndView.addObject("errorMessage", "请输入手机号");
+//            return modelAndView;
+//        } else {
+//            modelAndView.addObject("phone", phone);
+//        }
+//
+//        if (StringUtils.isEmpty(password)) {
+//            modelAndView.addObject("errorMessage", "请输入密码");
+//            return modelAndView;
+//        } else {
+//            // 根据手机和密码从数据库或查询用户
+//            UserExample userExample = new UserExample();
+//            userExample.createCriteria().andPhoneEqualTo(phone).andPasswordEqualTo(password);
+//            List<User> users = userMapper.selectByExample(userExample);
+//            // 如果用户存在，则跳转到博客首页，否则提示错误
+//            if (users.size() != 0) {
+//                User user = users.get(0);
+//                request.getSession().setAttribute("user", user);
+//                String token = jwtUtil.createToken(user);
+//                userService.updateToken(user, token);
+//                Cookie cookie = new Cookie("token", token);
+//                cookie.setPath("/");
+//                response.addCookie(cookie);
+//                modelAndView.setViewName("redirect:/");
+//                return modelAndView;
+//            } else {
+//                modelAndView.addObject("errorMessage", "手机或密码输入错误");
+//                return modelAndView;
+//            }
+//        }
+//    }
 }

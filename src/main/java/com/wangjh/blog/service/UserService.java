@@ -92,4 +92,20 @@ public class UserService {
     public User findById(Long id) {
         return userMapper.selectByPrimaryKey(id);
     }
+
+    /**
+     * 根据手机号查找用户
+     * @param phone
+     * @return
+     */
+    public User findByPhone(String phone) {
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andPhoneEqualTo(phone);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (users.size() == 0) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+    }
 }
