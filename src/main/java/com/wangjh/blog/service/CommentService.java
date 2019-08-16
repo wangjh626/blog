@@ -11,11 +11,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.beans.MethodDescriptor;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,29 +26,38 @@ public class CommentService {
     private UserMapper userMapper;
 
     /**
-     * 一篇博客下的所有评论
-     * @param id    博客文章 id
+     * 封装根据 Comment 获取 CommentDTO 的方法
+     * @param commentExample
      * @return
      */
-    public List<CommentDTO> listComments(Long id) {
-        CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria().andParentIdIsNull().andArticleIdEqualTo(id);
-        commentExample.setOrderByClause("comment_date desc");
+    private List<CommentDTO> getCommentDTOS(CommentExample commentExample) {
+        // 根据 CommentExample 获取所有评论
         List<Comment> comments = commentMapper.selectByExample(commentExample);
+        // 如果评论为空则返回 null
         if (comments == null || comments.size() == 0) {
             return null;
         }
-        Set<Long> commentorsId = comments.stream().map(comment -> comment.getAnswererId()).collect(Collectors.toSet());
-        List<Long> userIds = new ArrayList<>();
-        userIds.addAll(commentorsId);
 
+        /**
+         * 如果评论不为空，则根据评论获取评论者的 id
+         * stream()：创建一个管道
+         * map()：将评论与评论者 id 一一映射
+         * distinct()：去重操作，将重复的评论者 id 去除
+         * collect(Collectors.toList())：将最后的结果转换成 List 集合形式
+         */
+        List<Long> userIds = comments.stream().map(Comment::getAnswererId).distinct().collect(Collectors.toList());
+
+        // 根据用户 id 获取所有用户
         UserExample userExample = new UserExample();
         userExample.createCriteria().andIdIn(userIds);
         List<User> users = userMapper.selectByExample(userExample);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
+        // 将用户 id 与用户一一映射，得到一个用户 Map
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
 
+        // 将 Comment 转换成 CommentDTO 形式的 List 集合
         List<CommentDTO> commentDTOS = comments.stream().map(comment -> {
             CommentDTO commentDTO = new CommentDTO();
+            // 将 Comment 的所有属性赋给 CommentDTO
             BeanUtils.copyProperties(comment, commentDTO);
             commentDTO.setUser(userMap.get(comment.getAnswererId()));
             return commentDTO;
@@ -59,33 +66,28 @@ public class CommentService {
     }
 
     /**
+     * 一篇博客下的所有评论
+     * @param id    博客文章 id
+     * @return
+     */
+    public List<CommentDTO> listComments(Long id) {
+        // 根据文章 id 按时间倒序获取所有的评论
+        CommentExample commentExample = new CommentExample();
+        commentExample.createCriteria().andParentIdIsNull().andArticleIdEqualTo(id);
+        commentExample.setOrderByClause("comment_date desc");
+        return getCommentDTOS(commentExample);
+    }
+
+    /**
      * 一篇博客下的所有回复
      * @param id
      * @return
      */
     public List<CommentDTO> listReplies(Long id) {
+        // 根据文章 id 获取所有回复
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andParentIdIsNotNull().andArticleIdEqualTo(id);
-        List<Comment> comments = commentMapper.selectByExample(commentExample);
-        if (comments == null || comments.size() == 0) {
-            return null;
-        }
-        Set<Long> commentorsId = comments.stream().map(comment -> comment.getAnswererId()).collect(Collectors.toSet());
-        List<Long> userIds = new ArrayList<>();
-        userIds.addAll(commentorsId);
-
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andIdIn(userIds);
-        List<User> users = userMapper.selectByExample(userExample);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
-
-        List<CommentDTO> commentDTOS = comments.stream().map(comment -> {
-            CommentDTO commentDTO = new CommentDTO();
-            BeanUtils.copyProperties(comment, commentDTO);
-            commentDTO.setUser(userMap.get(comment.getAnswererId()));
-            return commentDTO;
-        }).collect(Collectors.toList());
-        return commentDTOS;
+        return getCommentDTOS(commentExample);
     }
 
     /**
@@ -96,32 +98,5 @@ public class CommentService {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria().andArticleIdEqualTo(articleId);
         commentMapper.deleteByExample(commentExample);
-    }
-
-    /**
-     * 导航栏 --- 标签下面的所有回复
-     * @return
-     */
-    public List<CommentDTO> listMessage() {
-        CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria().andParentIdIsNull().andArticleIdIsNull();
-        commentExample.setOrderByClause("comment_date desc");
-        List<Comment> comments = commentMapper.selectByExample(commentExample);
-        Set<Long> commentorsId = comments.stream().map(comment -> comment.getAnswererId()).collect(Collectors.toSet());
-        List<Long> userIds = new ArrayList<>();
-        userIds.addAll(commentorsId);
-
-        UserExample userExample = new UserExample();
-        userExample.createCriteria().andIdIn(userIds);
-        List<User> users = userMapper.selectByExample(userExample);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
-
-        List<CommentDTO> messagesDTO = comments.stream().map(comment ->{
-            CommentDTO commentDTO = new CommentDTO();
-            BeanUtils.copyProperties(comment, commentDTO);
-            commentDTO.setUser(userMap.get(comment.getAnswererId()));
-            return commentDTO;
-        }).collect(Collectors.toList());
-        return messagesDTO;
     }
 }

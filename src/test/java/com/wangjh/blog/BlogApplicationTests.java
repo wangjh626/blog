@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.UserMapper;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,15 @@ public class BlogApplicationTests {
 
     @Test
     public void contextLoads() {
+    }
+
+    @Test
+    public void code() {
+        String str = "hello";
+        String salt = "123";
+        String md5 = new Md5Hash(str, salt).toString();
+        System.out.println(md5);
+
     }
 
     /**

@@ -1,14 +1,3 @@
-function json() {
-    var json = [];
-    var user = {};
-    user.phone = document.userForm.phone;
-    user.username = document.userForm.username;
-    user.password = document.userForm.password;
-    json.push(user);
-    var userJson = JSON.stringify(json);
-    alert(userJson);
-}
-
 function errorMessgae() {
     var type = $('#type').val();
     var original = "原创";
@@ -25,19 +14,23 @@ function modifiedUser() {
 function postComment() {
     var articleId = $("#article_id").val();
     var commentContent = $("#comment_content").val();
-    $.ajax({
-        type: "POST",
-        url: "/comment",
-        contentType: "application/json",
-        data: JSON.stringify({
-            articleId: articleId,
-            commentContent: commentContent
-        }),
-        success: function (response) {
-            window.location.reload();
-        },
-        dataType: "json"
-    });
+    if (commentContent) {
+        $.ajax({
+            type: "POST",
+            url: "/comment",
+            contentType: "application/json",
+            data: JSON.stringify({
+                articleId: articleId,
+                commentContent: commentContent
+            }),
+            success: function (response) {
+                window.location.reload();
+            },
+            dataType: "json"
+        });
+    } else {
+        alert("评论不能为空！");
+    }
 }
 
 function postReply(e) {
@@ -46,37 +39,24 @@ function postReply(e) {
     var parentId = e.getAttribute("data-id");
     var textareaId = "#reply-" + parentId;
     var replyContent = $(textareaId).val();
-    $.ajax({
-        type: "POST",
-        url: "/reply",
-        contentType: "application/json",
-        data: JSON.stringify({
-            /* key 要与 CommentDTO 里面属性的名称一一对应 */
-            parentId: parentId,
-            articleId: articleId,
-            respondentId: respondentId,
-            commentContent: replyContent
-        }),
-        success: function (response) {
-            window.location.reload();
-        },
-        dataType: "json"
-    });
-}
-
-function leaveMessage() {
-    var message = $("#message_content").val();
-    $.ajax({
-        type: "POST",
-        url: "/tags",
-        contentType: "application/json",
-        data: JSON.stringify({
-            /* key 要与 CommentDTO 里面属性的名称一一对应 */
-            commentContent: message
-        }),
-        success: function (response) {
-            window.location.reload();
-        },
-        dataType: "json"
-    });
+    if (replyContent) {
+        $.ajax({
+            type: "POST",
+            url: "/reply",
+            contentType: "application/json",
+            data: JSON.stringify({
+                /* key 要与 CommentDTO 里面属性的名称一一对应 */
+                parentId: parentId,
+                articleId: articleId,
+                respondentId: respondentId,
+                commentContent: replyContent
+            }),
+            success: function (response) {
+                window.location.reload();
+            },
+            dataType: "json"
+        });
+    } else {
+        alert("回复不能为空！");
+    }
 }
