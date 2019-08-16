@@ -41,6 +41,8 @@ public class CommentController {
         Comment comment = new Comment();
         // 被评论的文章 id
         Long articleId = commentDTO.getArticleId();
+        // 文章评论数加 1
+        articleService.addCommentCount(articleId);
         comment.setArticleId(articleId);
         // 文章作者
         Article article = articleService.findById(articleId);
@@ -82,6 +84,8 @@ public class CommentController {
         comment.setParentId(pId);
         // 被评论的文章 id
         Long articleId = commentDTO.getArticleId();
+        // 文章评论数加 1
+        articleService.addCommentCount(articleId);
         comment.setArticleId(articleId);
         // 文章作者
         Article article = articleService.findById(articleId);

@@ -19,7 +19,7 @@ public class ProfileController {
      * 修改个人资料
      * @return
      */
-    @PostMapping("/admin-user")
+    @PostMapping("/admin/user")
     public String modify(@RequestParam("name") String username, @RequestParam("email") String email,
                          @RequestParam("intro") String intro, @RequestParam(value = "avatar") String avatar,
                          HttpServletRequest request) {

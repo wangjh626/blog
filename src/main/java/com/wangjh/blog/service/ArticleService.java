@@ -2,9 +2,11 @@ package com.wangjh.blog.service;
 
 
 import com.wangjh.blog.dto.CategoryDTO;
+import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.ArticleExample;
+import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.ArticleMapper;
 import org.apache.ibatis.session.RowBounds;
@@ -13,12 +15,17 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
+
+    @Autowired
+    private CommentService commentService;
 
     /**
      * 添加文章或者更新文章时设置文章的属性
@@ -92,6 +99,7 @@ public class ArticleService {
         setArticleAttributes(article, title, category, tags, type, content);
         article.setPublishDate(System.currentTimeMillis());
         article.setUpdateDate(article.getPublishDate());
+        article.setComments(0);
         article.setLikes(0);
         articleMapper.insert(article);
     }
@@ -400,5 +408,26 @@ public class ArticleService {
         ArticleExample articleExample = new ArticleExample();
         articleExample.createCriteria().andAuthorEqualTo(username);
         return articleMapper.selectByExample(articleExample);
+    }
+
+    /**
+     * 在博客首页展示 5 篇热门文章（根据评论数排序）
+     * @return
+     */
+    public List<Article> hotArticles() {
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andCommentsGreaterThan(0);
+        articleExample.setOrderByClause("comments desc");
+        return articleMapper.selectByExampleWithRowbounds(articleExample, new RowBounds(0, 5));
+    }
+
+    /**
+     * 文章添加评论数
+     * @param articleId
+     */
+    public void addCommentCount(Long articleId) {
+        Article article = articleMapper.selectByPrimaryKey(articleId);
+        article.setComments(article.getComments() + 1);
+        articleMapper.updateByPrimaryKey(article);
     }
 }

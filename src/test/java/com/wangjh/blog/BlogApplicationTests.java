@@ -5,9 +5,11 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.UserMapper;
+import com.wangjh.blog.service.ArticleService;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -37,7 +40,6 @@ public class BlogApplicationTests {
         String salt = "123";
         String md5 = new Md5Hash(str, salt).toString();
         System.out.println(md5);
-
     }
 
     /**

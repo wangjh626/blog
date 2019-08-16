@@ -67,15 +67,25 @@ public class CommentService {
 
     /**
      * 一篇博客下的所有评论
-     * @param id    博客文章 id
+     * @param articleId    博客文章 id
      * @return
      */
-    public List<CommentDTO> listComments(Long id) {
+    public List<CommentDTO> listComments(Long articleId) {
         // 根据文章 id 按时间倒序获取所有的评论
         CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria().andParentIdIsNull().andArticleIdEqualTo(id);
+        commentExample.createCriteria().andParentIdIsNull().andArticleIdEqualTo(articleId);
         commentExample.setOrderByClause("comment_date desc");
         return getCommentDTOS(commentExample);
+    }
+
+    /**
+     * 列出所有文章的评论
+     * @return
+     */
+    public List<Comment> listComments() {
+        CommentExample commentExample = new CommentExample();
+        commentExample.createCriteria().andArticleIdIsNotNull();
+        return commentMapper.selectByExample(commentExample);
     }
 
     /**
