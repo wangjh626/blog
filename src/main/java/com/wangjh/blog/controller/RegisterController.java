@@ -1,6 +1,7 @@
 package com.wangjh.blog.controller;
 
 import com.alibaba.druid.util.StringUtils;
+import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.UserService;
 import com.wangjh.blog.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,14 @@ public class RegisterController {
             modelAndView.addObject("errorMessage", "请输入 11 位手机号");
             return modelAndView;
         } else {
-            modelAndView.addObject("phone", phone);
+            // 检查该手机号是否已经注册
+            User user = userService.findByPhone(phone);
+            if (user != null) {
+                modelAndView.addObject("errorMessage", "该手机号已注册");
+                return modelAndView;
+            } else {
+                modelAndView.addObject("phone", phone);
+            }
         }
         if (StringUtils.isEmpty(username)) {
             modelAndView.addObject("errorMessage", "请输入用户名");
