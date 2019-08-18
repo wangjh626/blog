@@ -11,6 +11,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <link rel="alternate icon" type="image/png" href="/i/favicon.png">
     <link rel="stylesheet" href="/css/amazeui.min.css"/>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="/js/blog.js"></script>
     <style>
         .header {
@@ -43,7 +44,7 @@
             <div style="text-align: center;">
                 <label style="float: left">注册</label>
                 <span th:text="${errorMessage}"
-                  class="col-lg-6 col-md-8 col-sm-centered am-alert am-alert-danger" data-am-alert></span>
+                      class="col-lg-6 col-md-8 col-sm-centered am-alert am-alert-danger" data-am-alert></span>
             </div>
         </div>
         <hr>
@@ -60,7 +61,7 @@
             <br>
             <div class="am-cf">
                 <a href="/register">
-                    <input type="submit" value="注册" class="am-btn am-btn-success am-btn-sm am-fl" onclick="register()">
+                    <input type="submit" value="注册" class="am-btn am-btn-success am-btn-sm am-fl">
                 </a>
             </div>
         </form>

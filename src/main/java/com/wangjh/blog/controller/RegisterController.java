@@ -3,13 +3,14 @@ package com.wangjh.blog.controller;
 import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.UserService;
-import com.wangjh.blog.util.JwtUtil;
+import com.wangjh.blog.shiro.ShiroEncryption;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class RegisterController {
@@ -18,7 +19,7 @@ public class RegisterController {
     private UserService userService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private ShiroEncryption shiroEncryption;
 
     /**
      * 注册页面
@@ -36,37 +37,38 @@ public class RegisterController {
      * @param password
      * @return
      */
-    @PostMapping("register")
-    @ResponseBody
-    public ModelAndView registerUser(@RequestParam("phone") String phone, @RequestParam("username") String username,
-                                     @RequestParam("password") String password, HttpServletResponse response){
+    @PostMapping("/register")
+    public ModelAndView registerUser(@RequestParam String phone, @RequestParam String username,
+                                     @RequestParam String password, RedirectAttributes redirectAttributes){
         ModelAndView modelAndView = new ModelAndView("register");
         if (phone.length() != 11) {
-            modelAndView.addObject("errorMessage", "请输入 11 位手机号");
+            redirectAttributes.addFlashAttribute("errorMessage", "请输入 11 位手机号");
             return modelAndView;
         } else {
             // 检查该手机号是否已经注册
-            User user = userService.findByPhone(phone);
-            if (user != null) {
-                modelAndView.addObject("errorMessage", "该手机号已注册");
+            User dbUser = userService.findByPhone(phone);
+            if (dbUser != null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "该手机号已注册");
                 return modelAndView;
             } else {
-                modelAndView.addObject("phone", phone);
+                redirectAttributes.addFlashAttribute("phone", phone);
             }
         }
         if (StringUtils.isEmpty(username)) {
-            modelAndView.addObject("errorMessage", "请输入用户名");
+            redirectAttributes.addFlashAttribute("errorMessage", "请输入用户名");
             return modelAndView;
         } else {
-            modelAndView.addObject("username", username);
+            redirectAttributes.addFlashAttribute("username", username);
         }
         if (StringUtils.isEmpty(password)) {
-            modelAndView.addObject("errorMessage", "请输入密码");
+            redirectAttributes.addFlashAttribute("errorMessage", "请输入密码");
             return modelAndView;
         }
-        userService.register(phone, username, password);
+        // 使用 Shiro 自带的工具类生成 salt
+        String salt = new SecureRandomNumberGenerator().nextBytes().toString();
+        String encodedPassword = shiroEncryption.shiroEncryption(password, salt);
+        userService.register(phone, username, salt, encodedPassword);
         modelAndView.setViewName("redirect:/login");
         return modelAndView;
     }
-
 }

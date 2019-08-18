@@ -7,6 +7,30 @@ function errorMessgae() {
     }
 }
 
+// function register() {
+//     var phone = $("#phone").val();
+//     var username = $("#username").val();
+//     var password = $("#password").val();
+//     if (phone && username && password) {
+//         $.ajax({
+//             type: "POST",
+//             url: "register/registerUser",
+//             contentType: "application/json;charset=utf-8",
+//             data: JSON.stringify({
+//                 phone: phone,
+//                 username: username,
+//                 password: password
+//             }),
+//             success: function (response) {
+//                 window.location.href = "/login";
+//             },
+//             dataType: "json"
+//         });
+//     } else {
+//         alert("出错了！！！");
+//     }
+// }
+
 function modifiedUser() {
     // var username = $("#username").val();
     // var email = $("#email").val();

@@ -19,10 +19,11 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public void register(String phone, String username, String password) {
+    public void register(String phone, String username, String salt, String password) {
         User user = new User();
         user.setPhone(phone);
         user.setUsername(username);
+        user.setSalt(salt);
         user.setPassword(password);
         userMapper.insert(user);
     }
