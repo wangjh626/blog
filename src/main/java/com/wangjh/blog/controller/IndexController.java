@@ -33,11 +33,13 @@ public class IndexController {
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (StringUtils.equals("token", cookie.getName())) {
-                User user = userService.findByToken(cookie.getValue());
-                request.getSession().setAttribute("user", user);
-                break;
+        if (cookies.length != 0) {
+            for (Cookie cookie : cookies) {
+                if (StringUtils.equals("token", cookie.getName())) {
+                    User user = userService.findByToken(cookie.getValue());
+                    request.getSession().setAttribute("user", user);
+                    break;
+                }
             }
         }
         // 所有文章
