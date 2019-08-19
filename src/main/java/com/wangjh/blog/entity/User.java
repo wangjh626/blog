@@ -1,5 +1,8 @@
 package com.wangjh.blog.entity;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class User {
     /**
      *
@@ -17,6 +20,8 @@ public class User {
      *
      * @mbg.generated Sun Aug 18 00:20:47 CST 2019
      */
+    @Pattern(regexp = "^[1](([3|5|8][\\d])|([4][4,5,6,7,8,9])|([6][2,5,6,7])|([7][^9])|([9][1,8,9]))[\\d]{8}$",
+            message = "请输入正确的手机号")
     private String phone;
 
     /**
@@ -26,6 +31,7 @@ public class User {
      *
      * @mbg.generated Sun Aug 18 00:20:47 CST 2019
      */
+    @Size(min = 2, max = 12, message = "用户名长度在 2-12 之间")
     private String username;
 
     /**
@@ -35,6 +41,7 @@ public class User {
      *
      * @mbg.generated Sun Aug 18 00:20:47 CST 2019
      */
+    @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$", message = "请输入 6-16 位密码，密码由数字和字母组合")
     private String password;
 
     /**
@@ -53,6 +60,7 @@ public class User {
      *
      * @mbg.generated Sun Aug 18 00:20:47 CST 2019
      */
+    @Pattern(regexp = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$", message = "请输入正确的邮箱地址")
     private String email;
 
     /**

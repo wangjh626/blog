@@ -9,7 +9,8 @@ import java.util.Date;
 public class JwtUtil {
 
     public String createToken(User user) {
-        String token = JWT.create().withKeyId(String.valueOf(user.getId())).withSubject(user.getUsername()).withIssuedAt(new Date()).sign(Algorithm.HMAC256(user.getPassword()));
+        String token =
+                JWT.create().withKeyId(String.valueOf(user.getId())).withSubject(user.getUsername()).withIssuedAt(new Date()).withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 7200)).sign(Algorithm.HMAC256(user.getPassword()));
         return token;
     }
 }

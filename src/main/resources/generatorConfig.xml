@@ -11,8 +11,8 @@
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
                         connectionURL="jdbc:mysql://139.159.248.6/springbootblog"
-                        userId="root"
-                        password="root">
+                        userId="wangjh"
+                        password="1994626wjh">
             <!-- 其他数据库中有相同的表名是需要设置 nullCatalogMeansCurrent 为 true -->
             <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>

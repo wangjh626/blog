@@ -1,11 +1,13 @@
 package com.wangjh.blog.controller;
 
+import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,12 +22,14 @@ public class ProfileController {
      * @return
      */
     @PostMapping("/admin/user")
-    public String modify(@RequestParam("name") String username, @RequestParam("email") String email,
-                         @RequestParam("intro") String intro, @RequestParam(value = "avatar") String avatar,
-                         HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-        userService.modifyProfile(user.getId(), username, email, intro, avatar);
+    public String modify(@Validated User user, BindingResult result, HttpServletRequest request) {
+        User dbUser = (User) request.getSession().getAttribute("user");
+        if (StringUtils.isEmpty(user.getUsername())) {
+            user.setUsername(dbUser.getUsername());
+        }
+        userService.modifyProfile(dbUser.getId(), user.getUsername(), user.getEmail(), user.getPersonalBrief(),
+                user.getAvatarImgUrl());
+        request.getSession().setAttribute("user", user);
         return "redirect:/admin/user";
     }
-
 }
