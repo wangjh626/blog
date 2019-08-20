@@ -1,6 +1,5 @@
 package com.wangjh.blog.service;
 
-import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.entity.UserExample;

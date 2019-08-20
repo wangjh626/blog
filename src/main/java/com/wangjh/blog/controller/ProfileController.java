@@ -1,10 +1,10 @@
 package com.wangjh.blog.controller;
 
-import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

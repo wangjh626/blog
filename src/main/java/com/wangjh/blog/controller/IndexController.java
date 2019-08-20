@@ -1,6 +1,5 @@
 package com.wangjh.blog.controller;
 
-import com.alibaba.druid.util.StringUtils;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.dto.TagDTO;
 import com.wangjh.blog.entity.Article;
@@ -13,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,7 @@ public class IndexController {
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies.length != 0) {
+        if (cookies != null && cookies.length != 0) {
             for (Cookie cookie : cookies) {
                 if (StringUtils.equals("token", cookie.getName())) {
                     User user = userService.findByToken(cookie.getValue());
