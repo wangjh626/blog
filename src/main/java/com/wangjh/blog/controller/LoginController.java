@@ -1,6 +1,7 @@
 package com.wangjh.blog.controller;
 
 import com.wangjh.blog.entity.User;
+import com.wangjh.blog.mapper.UserMapper;
 import com.wangjh.blog.service.UserService;
 import com.wangjh.blog.shiro.ShiroEncryption;
 import com.wangjh.blog.util.JwtUtil;
@@ -30,6 +31,9 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private ShiroEncryption shiroEncryption;
@@ -90,6 +94,9 @@ public class LoginController {
             // 登录成功
             // 给 user 设置一个 token
             userService.updateToken(dbUser, jwtUtil.createToken(dbUser));
+            // 记录下用户登录时间
+            dbUser.setRecentlyLanded(System.currentTimeMillis());
+            userMapper.updateByPrimaryKey(dbUser);
             // 并将此 token 添加到 Cookie 中
             response.addCookie(new Cookie("token", dbUser.getToken()));
             request.getSession().setAttribute("user", dbUser);

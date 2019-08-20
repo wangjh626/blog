@@ -4,10 +4,13 @@ import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.UserMapper;
-import com.wangjh.blog.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +109,43 @@ public class UserService {
             return null;
         } else {
             return users.get(0);
+        }
+    }
+
+    /**
+     * 退出登录
+     * @param response
+     * @param request
+     */
+    public void logout(HttpServletResponse response, HttpServletRequest request) {
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    /**
+     * 用户的登录状态
+     * @param response
+     * @param request
+     */
+    public void loginStatus(HttpServletResponse response, HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null && cookies.length != 0) {
+            for (Cookie cookie : cookies) {
+                if (StringUtils.equals("token", cookie.getName())) {
+                    User user = findByToken(cookie.getValue());
+                    // 登录状态的过期时间为两天
+                    long expireDate = 86400 * 1000L;
+                    if (System.currentTimeMillis() - user.getRecentlyLanded() > expireDate) {
+                        logout(response, request);
+                    } else {
+                        request.getSession().setAttribute("user", user);
+                    }
+                    break;
+                }
+            }
         }
     }
 }

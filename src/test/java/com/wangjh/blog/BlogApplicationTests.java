@@ -55,7 +55,7 @@ public class BlogApplicationTests {
         String token = builder.withKeyId(String.valueOf(user.getId()))
                 .withSubject(user.getUsername())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 20 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 1000))
                 .sign(Algorithm.HMAC256(user.getPassword()));
         System.out.println(token);
     }
@@ -65,7 +65,7 @@ public class BlogApplicationTests {
      */
     @Test
     public void decode() {
-        String token = "eyJraWQiOiIxIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJ6enoiLCJleHAiOjE1NjQ3MjQzMTAsImlhdCI6MTU2NDcyNDI5MH0.mXg4NoQDscfEGcIZ9SYTGGijLAEBqGjpPAbj89ajCa0";
+        String token = "eyJraWQiOiIxIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJ6enoiLCJleHAiOjE1NjYyNzMwOTMsImlhdCI6MTU2NjI3MzAzM30.im3SPqDKFVrHeZxu6w4wkn_z3cnUi5plBY5wg7j4T7Q";
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256("940301")).build();
         DecodedJWT jwt = verifier.verify(token);
         String subject = jwt.getSubject();

@@ -16,6 +16,7 @@ import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -31,17 +32,10 @@ public class IndexController {
 
     @GetMapping
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
-                        @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null && cookies.length != 0) {
-            for (Cookie cookie : cookies) {
-                if (StringUtils.equals("token", cookie.getName())) {
-                    User user = userService.findByToken(cookie.getValue());
-                    request.getSession().setAttribute("user", user);
-                    break;
-                }
-            }
-        }
+                        @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request,
+                        HttpServletResponse response) {
+        // 验证用户的登录状态
+        userService.loginStatus(response, request);
         // 所有文章
         PaginationDTO paginationDTO = articleService.list(page, size, "");
         model.addAttribute("paginationDTO", paginationDTO);

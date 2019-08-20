@@ -1,5 +1,7 @@
 package com.wangjh.blog.controller;
 
+import com.wangjh.blog.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,13 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/logout")
 public class LogoutController {
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping
     public String logout(HttpServletResponse response, HttpServletRequest request) {
-        request.getSession().removeAttribute("user");
-        Cookie cookie = new Cookie("token", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        userService.logout(response, request);
         return "redirect:/";
     }
 }
