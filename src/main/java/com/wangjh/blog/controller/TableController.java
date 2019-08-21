@@ -31,9 +31,14 @@ public class TableController {
                         @RequestParam(name = "size", defaultValue = "15") Integer size, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         PaginationDTO paginationDTO = articleService.listByUsername(user.getUsername(),page, size);
-        model.addAttribute("paginationDTO", paginationDTO);
-        List articles = paginationDTO.getData();
-        model.addAttribute("articles", articles);
-        return "article-table";
+        if (paginationDTO != null) {
+            model.addAttribute("paginationDTO", paginationDTO);
+            List articles = paginationDTO.getData();
+            model.addAttribute("articles", articles);
+            return "article-table";
+        } else {
+            // 如果该用户没有写过博
+            return "admin-404";
+        }
     }
 }

@@ -111,7 +111,14 @@
                             <small>头像地址你懂得...</small>
                         </div>
                     </div>
-
+                    <div class="am-form-group">
+                        <label for="location" class="col-sm-3 am-form-label">地址 / Location</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="location" name="location" placeholder="输入你的地址 / Location（如：湖北 | 武汉）"
+                                   th:value="${user.getLocation()}">
+                            <small>地址你懂得...</small>
+                        </div>
+                    </div>
                     <!--          <div class="am-form-group">-->
                     <!--            <p>你可以使用<a href="#">gravatar.com</a>提供的头像或者使用本地上传头像。 </p>-->
                     <!--            <input type="file" id="pic" name="pic">-->

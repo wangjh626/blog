@@ -326,6 +326,9 @@ public class ArticleService {
         ArticleExample articleExample = new ArticleExample();
         articleExample.createCriteria().andIdIsNotNull().andAuthorEqualTo(username);
         List<Article> articles = articleMapper.selectByExample(articleExample);
+        if (articles == null || articles.size() == 0) {
+            return null;
+        }
 
         // 根据文章总数计算总页数
         totalPage = totalPage(size, articles.size());

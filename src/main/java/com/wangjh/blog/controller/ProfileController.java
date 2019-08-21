@@ -28,7 +28,7 @@ public class ProfileController {
             user.setUsername(dbUser.getUsername());
         }
         userService.modifyProfile(dbUser.getId(), user.getUsername(), user.getEmail(), user.getPersonalBrief(),
-                user.getAvatarImgUrl());
+                user.getAvatarImgUrl(), user.getLocation());
         request.getSession().setAttribute("user", user);
         return "redirect:/admin/user";
     }

@@ -77,14 +77,16 @@ public class UserService {
      * @param email
      * @param intro
      * @param avatar
+     * @param location
      * @return
      */
-    public void modifyProfile(Long id, String username, String email, String intro, String avatar) {
+    public void modifyProfile(Long id, String username, String email, String intro, String avatar, String location) {
         User user = userMapper.selectByPrimaryKey(id);
         user.setUsername(username);
         user.setEmail(email);
         user.setPersonalBrief(intro);
         user.setAvatarImgUrl(avatar);
+        user.setLocation(location);
         userMapper.updateByPrimaryKey(user);
     }
 
