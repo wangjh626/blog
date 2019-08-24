@@ -32,4 +32,15 @@ public class ResultDTO<T> {
         resultDTO.setData(t);
         return resultDTO;
     }
+
+    /**
+     * 用户没有登录时不能点赞
+     * @return
+     */
+    public static ResultDTO errorOf() {
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(201);
+        resultDTO.setMessage("未登录，无法点赞");
+        return resultDTO;
+    }
 }

@@ -1,9 +1,6 @@
 package com.wangjh.blog.controller;
 
-import com.wangjh.blog.dto.CategoryDTO;
-import com.wangjh.blog.dto.CommentDTO;
-import com.wangjh.blog.dto.PaginationDTO;
-import com.wangjh.blog.dto.TagDTO;
+import com.wangjh.blog.dto.*;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
@@ -16,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -147,5 +146,27 @@ public class ArticleController {
         PaginationDTO<Article> paginationDTO = articleService.paginationByCategory(categories.get(id).getName(), page, size);
         modelAndView.addObject("paginationDTO", paginationDTO);
         return modelAndView;
+    }
+
+    /**
+     * 文章点赞
+     * @param commentDTO
+     * @return
+     */
+    @PostMapping("/like")
+    @ResponseBody
+    public Object like(@RequestBody CommentDTO commentDTO, HttpServletRequest request, HttpServletResponse response) {
+        Object user = request.getSession().getAttribute("user");
+        if (user == null) {
+            return ResultDTO.errorOf();
+        }
+        // 查询被点赞文章
+        Article article = articleService.findById(commentDTO.getArticleId());
+        // 文章 likes 数量加一
+        article.setLikes(article.getLikes() + 1);
+        // 更新文章
+        articleService.update(article);
+
+        return ResultDTO.successOf();
     }
 }

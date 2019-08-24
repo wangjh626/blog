@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <div th:insert="~{navigation::head}"></div>
 <title>文章 | Wangjh Blog</title>
 <link rel="stylesheet" href="/css/editormd.preview.css"/>
@@ -32,6 +32,14 @@
                 });
             });
         </script>
+        <div id="like" class="am-btn-group" onclick="like(this)" th:data-articleId="${article.getId()}">
+            <div class="am-btn am-round" style="border-color: #ea6f5a;background-color: white;font-size: 17px">
+                <div class="col-sm-8">
+                    <i class="am-icon-heart-o" style="color: #ea6f5a"></i>   <span style="color: #ea6f5a">喜欢</span>
+                </div>
+                <div class="col-sm-4" style="border-left: 1px solid;color: #ea6f5a" th:text="${article.getLikes()}"></div>
+            </div>
+        </div>
         <hr class="am-article-divider blog-hr">
         <div>
             <div th:if="${session.user==null}">
@@ -85,7 +93,8 @@
                         <!-- 评论容器 -->
                         <a href="">
                             <img class="am-comment-avatar"
-                                 th:src="${reply.getUser().getAvatarImgUrl()!=null?reply.getUser().getAvatarImgUrl():'/images/avatar.png'}"/> <!-- 评论者头像 -->
+                                 th:src="${reply.getUser().getAvatarImgUrl()!=null?reply.getUser().getAvatarImgUrl():'/images/avatar.png'}"/>
+                            <!-- 评论者头像 -->
                         </a>
                         <div class="am-comment-main"> <!-- 评论内容容器 -->
                             <header class="am-comment-hd">

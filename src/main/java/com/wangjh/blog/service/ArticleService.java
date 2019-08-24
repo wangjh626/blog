@@ -433,4 +433,12 @@ public class ArticleService {
         article.setComments(article.getComments() + 1);
         articleMapper.updateByPrimaryKey(article);
     }
+
+    /**
+     * 文章更新
+     * @param article
+     */
+    public void update(Article article) {
+        articleMapper.updateByPrimaryKey(article);
+    }
 }

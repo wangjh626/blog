@@ -105,3 +105,25 @@ function postReply(e) {
         alert("回复不能为空！");
     }
 }
+
+function like(e) {
+    var articleId = e.getAttribute("data-articleId");
+    if (articleId) {
+        $.ajax({
+            type: "POST",
+            url: "/like",
+            contentType: "application/json",
+            data: JSON.stringify({
+                articleId: articleId
+            }),
+            success: function (response) {
+                if (response.code === 200) {
+                    window.location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            dataType: "json"
+        });
+    }
+}
