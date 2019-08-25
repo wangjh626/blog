@@ -1,5 +1,8 @@
 package com.wangjh.blog.entity;
 
+import lombok.Data;
+
+@Data
 public class User {
     /**
      *

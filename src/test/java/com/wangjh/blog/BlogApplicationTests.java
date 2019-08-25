@@ -11,6 +11,7 @@ import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.UserMapper;
 import com.wangjh.blog.service.ArticleService;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,25 @@ public class BlogApplicationTests {
 
     @Test
     public void contextLoads() {
+    }
+
+    @Test
+    public void insertUser() {
+        User user = new User();
+        user.setPhone("18671288856");
+        user.setUsername("haha");
+        user.setPassword("123456a");
+
+        int insert = userMapper.insert(user);
+        System.out.println(insert);
+    }
+
+    @Test
+    public void testSelect() {
+        System.out.println("----- selectAll method test -----");
+        List<User> userList = userMapper.selectList(null);
+        Assert.assertEquals(4, userList.size());
+        userList.forEach(System.out::println);
     }
 
     @Test
