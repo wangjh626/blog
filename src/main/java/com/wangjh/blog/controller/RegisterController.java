@@ -43,6 +43,12 @@ public class RegisterController {
         if (result.getFieldError("phone") != null) {
             modelAndView.addObject("errorMessage", result.getFieldError("phone").getDefaultMessage());
             return modelAndView;
+        } else {
+            User dbUser = userService.findByPhone(user.getPhone());
+            if (dbUser != null) {
+                modelAndView.addObject("errorMessage", "该手机号已注册");
+                return modelAndView;
+            }
         }
         if (result.getFieldError("username") != null) {
             modelAndView.addObject("errorMessage", result.getFieldError("username").getDefaultMessage());

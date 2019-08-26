@@ -12,7 +12,8 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <link rel="alternate icon" type="image/png" href="/i/favicon.png">
+    <!--    <link rel="icon" type="image/png" href="/i/favicon.png">-->
+    <link rel="icon" type="image/png" href="/favicon.ico">
     <link rel="stylesheet" href="/css/amazeui.min.css"/>
     <link rel="stylesheet" href="/css/blog.css">
     <style>
@@ -87,27 +88,27 @@
                 <li
                         th:class="${#httpServletRequest.getRequestURI()=='/tags'}?'am-active':''"><a
                         href="/tags">标签</a></li>
-                <li class="am-dropdown" data-am-dropdown>
-                    <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
-                        下拉 <span class="am-icon-caret-down"></span>
-                    </a>
-                    <ul class="am-dropdown-content">
-                        <li class="am-dropdown-header">标题</li>
-                        <li><a href="#">1. 去月球</a></li>
-                        <li class="am-active"><a href="#">2. 去火星</a></li>
-                        <li><a href="#">3. 还是回地球</a></li>
-                        <li class="am-disabled"><a href="#">4. 下地狱</a></li>
-                        <li class="am-divider"></li>
-                        <li><a href="#">5. 桥头一回首</a></li>
-                    </ul>
-                </li>
+<!--                <li class="am-dropdown" data-am-dropdown>-->
+<!--                    <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">-->
+<!--                        下拉 <span class="am-icon-caret-down"></span>-->
+<!--                    </a>-->
+<!--                    <ul class="am-dropdown-content">-->
+<!--                        <li class="am-dropdown-header">标题</li>-->
+<!--                        <li><a href="#">1. 去月球</a></li>-->
+<!--                        <li class="am-active"><a href="#">2. 去火星</a></li>-->
+<!--                        <li><a href="#">3. 还是回地球</a></li>-->
+<!--                        <li class="am-disabled"><a href="#">4. 下地狱</a></li>-->
+<!--                        <li class="am-divider"></li>-->
+<!--                        <li><a href="#">5. 桥头一回首</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
             </ul>
 
-            <form class="am-topbar-form am-topbar-left am-form-inline" role="search">
-                <div class="am-form-group">
-                    <input type="text" class="am-form-field am-input-sm" placeholder="搜索">
-                </div>
-            </form>
+<!--            <form class="am-topbar-form am-topbar-left am-form-inline" role="search">-->
+<!--                <div class="am-form-group">-->
+<!--                    <input type="text" class="am-form-field am-input-sm" placeholder="搜索">-->
+<!--                </div>-->
+<!--            </form>-->
 
             <div class="am-topbar-right">
                 <a href="/publish" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color:
@@ -123,9 +124,6 @@
                     </button>
                     <ul class="am-dropdown-content">
                         <li><a href="/admin">个人中心</a></li>
-                        <li class="am-active"><a href="#">最荣幸是</a></li>
-                        <li><a href="#">谁都是造物者的光荣</a></li>
-                        <li class="am-disabled"><a href="#">就站在光明的角落</a></li>
                         <li class="am-divider"></li>
                         <li><a href="/logout">退出登录</a></li>
                     </ul>
