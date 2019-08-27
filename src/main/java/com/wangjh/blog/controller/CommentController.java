@@ -4,10 +4,13 @@ import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.ResultDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.Comment;
+import com.wangjh.blog.entity.Message;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.CommentMapper;
+import com.wangjh.blog.mapper.MessageMapper;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.UserService;
+import org.apache.catalina.filters.RemoteCIDRFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +30,9 @@ public class CommentController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     /**
      * 添加评论
@@ -65,6 +71,8 @@ public class CommentController {
         // 评论内容
         comment.setCommentContent(commentDTO.getCommentContent());
         commentMapper.insert(comment);
+        addMessage(comment, article, commentor, respondent);
+
         return ResultDTO.successOf();
     }
 
@@ -98,6 +106,7 @@ public class CommentController {
         comment.setAnswererUsername(commentor.getUsername());
         // 被评论者 id
         Long respondentId = commentDTO.getRespondentId();
+        User respondent = userService.findById(respondentId);
         comment.setRespondentId(respondentId);
         // 被评论者用户名
         comment.setRespondentUsername(userService.findById(respondentId).getUsername());
@@ -108,6 +117,27 @@ public class CommentController {
         // 评论内容
         comment.setCommentContent(commentDTO.getCommentContent());
         commentMapper.insert(comment);
+
+        addMessage(comment, article, commentor, respondent);
+
         return ResultDTO.successOf();
+    }
+
+    private void addMessage(Comment comment, Article article, User notifier, User receiver) {
+        // 消息通知（如果评论或者回复自己的博客则不需要通知）
+        Message message = new Message();
+        message.setNotifier(notifier.getId());
+        message.setNotifierName(notifier.getUsername());
+        message.setReceiver(receiver.getId());
+        message.setOuterId(article.getId());
+        message.setOuterTitle(article.getArticleTitle());
+        if (comment.getParentId() == null) {
+            message.setType(0);
+        } else {
+            message.setType(1);
+        }
+        message.setGmtCreate(comment.getCommentDate());
+        message.setStatus(0);
+        messageMapper.insert(message);
     }
 }

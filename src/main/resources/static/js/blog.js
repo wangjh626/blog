@@ -127,3 +127,13 @@ function like(e) {
         });
     }
 }
+
+function messageStatus(e) {
+    var messageId = e.getAttribute("data-id");
+    if (messageId) {
+        $.ajax({
+            type: "PUT",
+            url: "/message/" + messageId
+        })
+    }
+}

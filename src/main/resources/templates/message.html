@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:insert="~{navigation::head}"></div>
+<title>消息中心 | Wangjh Blog</title>
+<link rel="stylesheet" href="/css/editormd.preview.css"/>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/js/editormd.js"></script>
+<script src="/js/lib/marked.min.js"></script>
+<script src="/js/lib/prettify.min.js"></script>
+<script src="/js/blog.js"></script>
+<body>
+<div th:insert="~{navigation::navition}"></div>
+<div th:insert="~{navigation::userCard}"></div>
+<div class="col-md-2 blog-sidebar" th:if="${session.user==null}" style="margin: 30px;">
+    <div class="am-panel am-panel-default" style="border-radius: 2em;-webkit-box-shadow: 3px 3px 6px #666;
+    -moz-box-shadow: 3px 3px 6px #666;box-shadow: 3px 3px 6px #666;">
+        <div>
+            <img class="am-img-circle" style="height: 150px;margin: 10px 10px 20px 20px;"
+                 src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1935412836,2442891757&fm=26&gp=0.jpg">
+        </div>
+        <div class="am-u-sm-7" style="padding: 0 20px 0 0;">
+            <div class="img-words" style="text-align: center">
+                <h1>Wangjh626</h1>
+                <p style="font-size: 14px;margin-top: 5px;color: #9a9ea3;"><i class="am-icon-map-marker"></i> 湖北 | 武汉
+                </p>
+                <small style="font-size: 13px;color: #808080ad; margin-left: 20px">
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="am-g am-g-fixed blog-g-fixed">
+    <div class="col-md-12">
+        <h2 style="font-size: 35px;">最新消息</h2>
+        <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
+        <div th:each="message:${messages}" style="font-size: 20px">
+            <span th:text="${message.getNotifierName()}" style="color: #0e90d2"></span>
+            <span>回复了</span><span th:text="${message.getType()}==0?'问题':'评论'"></span>
+            <a th:text="${message.getOuterTitle()}" th:href="@{'/article/'+${message.getOuterId()}}"
+               th:data-id="${message.getId()}" onclick="messageStatus(this)"></a>
+            <p th:text="${#dates.format(message.getGmtCreate(), 'yyyy-MM-dd HH:ss:mm')}" style="font-size: 15px;color: #7f7f7f"></p>
+            <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
+        </div>
+    </div>
+</div>
+<footer class="blog-footer">
+    <p>blog template<br/>
+        <small>© Copyright XXX. by the AmazeUI Team.</small>
+    </p>
+</footer>
+<script src="/js/zepto.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+</body>
+</html>

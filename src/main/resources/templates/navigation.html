@@ -88,36 +88,41 @@
                 <li
                         th:class="${#httpServletRequest.getRequestURI()=='/tags'}?'am-active':''"><a
                         href="/tags">标签</a></li>
-<!--                <li class="am-dropdown" data-am-dropdown>-->
-<!--                    <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">-->
-<!--                        下拉 <span class="am-icon-caret-down"></span>-->
-<!--                    </a>-->
-<!--                    <ul class="am-dropdown-content">-->
-<!--                        <li class="am-dropdown-header">标题</li>-->
-<!--                        <li><a href="#">1. 去月球</a></li>-->
-<!--                        <li class="am-active"><a href="#">2. 去火星</a></li>-->
-<!--                        <li><a href="#">3. 还是回地球</a></li>-->
-<!--                        <li class="am-disabled"><a href="#">4. 下地狱</a></li>-->
-<!--                        <li class="am-divider"></li>-->
-<!--                        <li><a href="#">5. 桥头一回首</a></li>-->
-<!--                    </ul>-->
-<!--                </li>-->
+                <!--                <li class="am-dropdown" data-am-dropdown>-->
+                <!--                    <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">-->
+                <!--                        下拉 <span class="am-icon-caret-down"></span>-->
+                <!--                    </a>-->
+                <!--                    <ul class="am-dropdown-content">-->
+                <!--                        <li class="am-dropdown-header">标题</li>-->
+                <!--                        <li><a href="#">1. 去月球</a></li>-->
+                <!--                        <li class="am-active"><a href="#">2. 去火星</a></li>-->
+                <!--                        <li><a href="#">3. 还是回地球</a></li>-->
+                <!--                        <li class="am-disabled"><a href="#">4. 下地狱</a></li>-->
+                <!--                        <li class="am-divider"></li>-->
+                <!--                        <li><a href="#">5. 桥头一回首</a></li>-->
+                <!--                    </ul>-->
+                <!--                </li>-->
             </ul>
 
-<!--            <form class="am-topbar-form am-topbar-left am-form-inline" role="search">-->
-<!--                <div class="am-form-group">-->
-<!--                    <input type="text" class="am-form-field am-input-sm" placeholder="搜索">-->
-<!--                </div>-->
-<!--            </form>-->
+            <!--            <form class="am-topbar-form am-topbar-left am-form-inline" role="search">-->
+            <!--                <div class="am-form-group">-->
+            <!--                    <input type="text" class="am-form-field am-input-sm" placeholder="搜索">-->
+            <!--                </div>-->
+            <!--            </form>-->
 
             <div class="am-topbar-right">
-                <a href="/publish" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color:
-            #666666;" target="_blank">写博客</a>
+                <a href="/publish" class="am-btn am-btn-link am-btn-sm" style="color:#666666;font-size:
+                 16px;margin-top: 3px;" target="_blank">写博客</a>
                 <span th:if="${session.user == null}">
                     <a href="/login" class="am-btn am-btn-primary am-topbar-btn am-btn-sm" style="color: white;">登录</a>
-                    <a href="/register" class="am-btn am-btn-success am-topbar-btn am-btn-sm" style="color: white;">注册</a>
+                    <a href="/register" class="am-btn am-btn-success am-topbar-btn am-btn-sm"
+                       style="color: white;">注册</a>
                 </span>
                 <div class="am-dropdown" data-am-dropdown th:if="${session.user != null}">
+                    <a href="/message" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color:
+                        #666666;font-size:16px;margin-top: 3px;" target="_blank">消息<span
+                            class="am-badge am-badge-danger" th:text="${session.messageCount}"></span>
+                    </a>
                     <button class="am-btn am-btn-primary am-dropdown-toggle am-topbar-btn am-btn-sm"
                             data-am-dropdown-toggle th:text="${session.user.getUsername()}">
                         <span class="am-icon-caret-down"></span>
@@ -137,7 +142,8 @@
         <div class="am-panel am-panel-default" style="border-radius: 2em;-webkit-box-shadow: 3px 3px 6px #666;
     -moz-box-shadow: 3px 3px 6px #666;box-shadow: 3px 3px 6px #666;height: 360px">
             <div>
-                <img class="am-img-circle" style="height: 150px;margin: 10px 10px 20px 20px;" th:src="${session.user.getAvatarImgUrl()}">
+                <img class="am-img-circle" style="height: 150px;margin: 10px 10px 20px 20px;"
+                     th:src="${session.user.getAvatarImgUrl()}">
             </div>
             <div class="am-u-sm-7" style="padding: 0 20px 0 0;">
                 <div class="img-words" style="text-align: center">

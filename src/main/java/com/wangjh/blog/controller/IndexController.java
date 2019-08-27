@@ -5,6 +5,7 @@ import com.wangjh.blog.dto.TagDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
+import com.wangjh.blog.service.MessageService;
 import com.wangjh.blog.service.TagService;
 import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class IndexController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -63,6 +67,10 @@ public class IndexController {
                 tagsCount = 0;
             }
             request.getSession().setAttribute("tagsCount", tagsCount);
+
+            // 消息未读数
+            int messageCount = messageService.messageCount(user);
+            request.getSession().setAttribute("messageCount", messageCount);
         }
 
         // 所有文章

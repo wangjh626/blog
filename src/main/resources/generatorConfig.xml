@@ -10,9 +10,9 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://139.159.248.6/springbootblog"
-                        userId="wangjh"
-                        password="1994626wjh">
+                        connectionURL="jdbc:mysql://139.159.248.6/jhblog"
+                        userId="root"
+                        password="root">
             <!-- 其他数据库中有相同的表名是需要设置 nullCatalogMeansCurrent 为 true -->
             <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
@@ -34,7 +34,9 @@
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
-        <table tableName="user" domainObjectName="User">
+<!--        <table tableName="user" domainObjectName="User">-->
+<!--        </table>-->
+        <table tableName="message" domainObjectName="Message">
         </table>
 <!--        <table tableName="article" domainObjectName="Article">-->
 <!--            <columnOverride column="article_content" javaType="java.lang.String" jdbcType="VARCHAR">-->
