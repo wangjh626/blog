@@ -126,7 +126,7 @@
                                 <div class="am-form-group" th:if="${session.user!=null}">
                                     <label for="comment_content"></label>
                                     <!-- 被回复者 id -->
-                                    <input type="hidden" id="respondent_id" th:value="${comment.getRespondentId()}">
+                                    <input type="hidden" id="respondent_id" th:value="${comment.getAnswererId()}">
                                     <textarea th:id="${'reply-'+comment.getId()}" class="col-md-11"
                                               style="border-color: dodgerblue"></textarea>
                                     <span class="col-md-1">

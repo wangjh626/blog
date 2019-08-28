@@ -5,16 +5,17 @@ import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
+import com.wangjh.blog.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import sun.misc.resources.Messages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -28,6 +29,9 @@ public class ArticleController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private MessageService messageService;
+
     /**
      * 获取一篇博客下的所有评论，以及评论底下的回复
      *
@@ -36,7 +40,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping("/article/{id}")
-    public String artilce(@PathVariable("id") Long id, Model model) {
+    public String artilce(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // 根据博客 id 获取某一篇博客
         Article article = articleService.findById(id);
         model.addAttribute("article", article);
@@ -46,6 +50,11 @@ public class ArticleController {
         // 获取评论下的所有回复
         List<CommentDTO> replies = commentService.listReplies(id);
         model.addAttribute("replies", replies);
+        User user = (User) request.getSession().getAttribute("user");
+        if (user != null) {
+            int messageCount = messageService.messageCount(user.getId());
+            request.getSession().setAttribute("messageCount", messageCount);
+        }
         return "article";
     }
 

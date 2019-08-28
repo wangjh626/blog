@@ -12,7 +12,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <!--    <link rel="icon" type="image/png" href="/i/favicon.png">-->
+<!--        <link rel="icon" type="image/png" href="/i/favicon.png">-->
     <link rel="icon" type="image/png" href="/favicon.ico">
     <link rel="stylesheet" href="/css/amazeui.min.css"/>
     <link rel="stylesheet" href="/css/blog.css">
@@ -121,7 +121,8 @@
                 <div class="am-dropdown" data-am-dropdown th:if="${session.user != null}">
                     <a href="/message" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color:
                         #666666;font-size:16px;margin-top: 3px;" target="_blank">消息<span
-                            class="am-badge am-badge-danger" th:text="${session.messageCount}"></span>
+                            class="am-badge am-badge-danger" th:if="${session.messageCount!=0}"
+                            th:text="${session.messageCount}"></span>
                     </a>
                     <button class="am-btn am-btn-primary am-dropdown-toggle am-topbar-btn am-btn-sm"
                             data-am-dropdown-toggle th:text="${session.user.getUsername()}">

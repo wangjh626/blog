@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Set;
 
@@ -29,21 +28,11 @@ public class IndexController {
     private ArticleService articleService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private TagService tagService;
-
-    @Autowired
-    private MessageService messageService;
 
     @GetMapping
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
-                        @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request,
-                        HttpServletResponse response) {
-        // 验证用户的登录状态
-        userService.loginStatus(response, request);
-
+                        @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request) {
         // 用户文章总数和标签总数
         // 文章总数
         int articlesCount;
@@ -67,10 +56,6 @@ public class IndexController {
                 tagsCount = 0;
             }
             request.getSession().setAttribute("tagsCount", tagsCount);
-
-            // 消息未读数
-            int messageCount = messageService.messageCount(user);
-            request.getSession().setAttribute("messageCount", messageCount);
         }
 
         // 所有文章

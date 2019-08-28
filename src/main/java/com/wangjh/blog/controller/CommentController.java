@@ -90,6 +90,8 @@ public class CommentController {
         // 父 id
         Long pId = commentDTO.getParentId();
         comment.setParentId(pId);
+        // 父评论
+        Comment parentComment = commentMapper.selectByPrimaryKey(comment.getParentId());
         // 被评论的文章 id
         Long articleId = commentDTO.getArticleId();
         // 文章评论数加 1
@@ -105,7 +107,7 @@ public class CommentController {
         // 评论者用户名
         comment.setAnswererUsername(commentor.getUsername());
         // 被评论者 id
-        Long respondentId = commentDTO.getRespondentId();
+        Long respondentId = parentComment.getAnswererId();
         User respondent = userService.findById(respondentId);
         comment.setRespondentId(respondentId);
         // 被评论者用户名
@@ -123,21 +125,33 @@ public class CommentController {
         return ResultDTO.successOf();
     }
 
+    /**
+     * 添加消息
+     * @param comment
+     * @param article
+     * @param notifier
+     * @param receiver
+     */
     private void addMessage(Comment comment, Article article, User notifier, User receiver) {
         // 消息通知（如果评论或者回复自己的博客则不需要通知）
         Message message = new Message();
         message.setNotifier(notifier.getId());
         message.setNotifierName(notifier.getUsername());
-        message.setReceiver(receiver.getId());
         message.setOuterId(article.getId());
         message.setOuterTitle(article.getArticleTitle());
         if (comment.getParentId() == null) {
+            message.setReceiver(receiver.getId());
             message.setType(0);
         } else {
+            message.setReceiver(comment.getRespondentId());
             message.setType(1);
         }
-        message.setGmtCreate(comment.getCommentDate());
+//        message.setGmtCreate(comment.getCommentDate());
+        message.setGmtCreate(System.currentTimeMillis());
         message.setStatus(0);
-        messageMapper.insert(message);
+        // 自己在自己的博客中添加评论或者自己回复自己的评论不需要进行消息通知
+        if (!message.getNotifier().equals(message.getReceiver())) {
+            messageMapper.insert(message);
+        }
     }
 }

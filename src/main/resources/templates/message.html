@@ -34,10 +34,13 @@
         <h2 style="font-size: 35px;">最新消息</h2>
         <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
         <div th:each="message:${messages}" style="font-size: 20px">
+            <span th:if="${message.getStatus()==0}" class="am-icon-circle"
+                  style="color: #e84a4a;font-size: 12px"></span>
             <span th:text="${message.getNotifierName()}" style="color: #0e90d2"></span>
-            <span>回复了</span><span th:text="${message.getType()}==0?'问题':'评论'"></span>
+            <span>在你的</span>
             <a th:text="${message.getOuterTitle()}" th:href="@{'/article/'+${message.getOuterId()}}"
                th:data-id="${message.getId()}" onclick="messageStatus(this)"></a>
+            <span>中</span><span th:text="${message.getType()}==0?'添加了评论':'回复了你的评论'"></span>
             <p th:text="${#dates.format(message.getGmtCreate(), 'yyyy-MM-dd HH:ss:mm')}" style="font-size: 15px;color: #7f7f7f"></p>
             <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
         </div>

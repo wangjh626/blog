@@ -1,9 +1,11 @@
 package com.wangjh.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wangjh.blog.dto.ResultDTO;
 import com.wangjh.blog.entity.Message;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.MessageMapper;
+import com.wangjh.blog.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,21 +22,24 @@ public class MessageController {
     @Autowired
     private MessageMapper messageMapper;
 
+    @Autowired
+    private MessageService messageService;
+
     @GetMapping("/message")
     public String message(Model model, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("receiver", user.getId());
+        queryWrapper.eq("receiver", user.getId()).orderByDesc("gmt_create");
         List<Message> messages = messageMapper.selectList(queryWrapper);
         model.addAttribute("messages", messages);
         return "message";
     }
 
     @PutMapping("/message/{messageId}")
-    public void changeStatus(@PathVariable(name = "messageId") Long messageId) {
+    public String changeStatus(@PathVariable(name = "messageId") Long messageId, HttpServletRequest request) {
         Message message = messageMapper.selectByPrimaryKey(messageId);
         message.setStatus(1);
-        int i = messageMapper.updateByPrimaryKey(message);
-        System.out.println("更改状态" + i);
+        messageMapper.updateByPrimaryKey(message);
+        return "redirect:/article/" + message.getOuterId();
     }
 }

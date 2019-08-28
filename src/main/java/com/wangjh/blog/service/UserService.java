@@ -126,28 +126,4 @@ public class UserService {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
-
-    /**
-     * 用户的登录状态
-     * @param response
-     * @param request
-     */
-    public void loginStatus(HttpServletResponse response, HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null && cookies.length != 0) {
-            for (Cookie cookie : cookies) {
-                if (StringUtils.equals("token", cookie.getName())) {
-                    User user = findByToken(cookie.getValue());
-                    // 登录状态的过期时间为两天
-                    long expireDate = 86400 * 1000L;
-                    if (System.currentTimeMillis() - user.getRecentlyLanded() > expireDate) {
-                        logout(response, request);
-                    } else {
-                        request.getSession().setAttribute("user", user);
-                    }
-                    break;
-                }
-            }
-        }
-    }
 }

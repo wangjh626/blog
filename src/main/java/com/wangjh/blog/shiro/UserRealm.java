@@ -20,7 +20,6 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        System.out.println("执行授权逻辑");
         return null;
     }
 
@@ -32,8 +31,6 @@ public class UserRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        System.out.println("执行认证逻辑");
-
         // 编写 Shiro 判断逻辑
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         User user = userService.findByPhone(token.getUsername());
