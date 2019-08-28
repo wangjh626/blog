@@ -41,7 +41,8 @@
             <a th:text="${message.getOuterTitle()}" th:href="@{'/article/'+${message.getOuterId()}}"
                th:data-id="${message.getId()}" onclick="messageStatus(this)"></a>
             <span>中</span><span th:text="${message.getType()}==0?'添加了评论':'回复了你的评论'"></span>
-            <p th:text="${#dates.format(message.getGmtCreate(), 'yyyy-MM-dd HH:ss:mm')}" style="font-size: 15px;color: #7f7f7f"></p>
+            <p th:text="${#dates.format(message.getGmtCreate(), 'yyyy-MM-dd HH:mm:ss')}" style="font-size: 15px;color:
+             #7f7f7f"></p>
             <hr class="am-article-divider blog-hr" style="margin: 10px 0;">
         </div>
     </div>

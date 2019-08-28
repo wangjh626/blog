@@ -8,9 +8,6 @@ import com.wangjh.blog.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Service
 public class MessageService {
     @Autowired

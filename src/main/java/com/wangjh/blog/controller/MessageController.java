@@ -1,11 +1,9 @@
 package com.wangjh.blog.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wangjh.blog.dto.ResultDTO;
 import com.wangjh.blog.entity.Message;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.MessageMapper;
-import com.wangjh.blog.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +19,6 @@ public class MessageController {
 
     @Autowired
     private MessageMapper messageMapper;
-
-    @Autowired
-    private MessageService messageService;
 
     @GetMapping("/message")
     public String message(Model model, HttpServletRequest request) {

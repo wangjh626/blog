@@ -10,7 +10,6 @@ import com.wangjh.blog.mapper.CommentMapper;
 import com.wangjh.blog.mapper.MessageMapper;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.UserService;
-import org.apache.catalina.filters.RemoteCIDRFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -146,8 +145,7 @@ public class CommentController {
             message.setReceiver(comment.getRespondentId());
             message.setType(1);
         }
-//        message.setGmtCreate(comment.getCommentDate());
-        message.setGmtCreate(System.currentTimeMillis());
+        message.setGmtCreate(comment.getCommentDate());
         message.setStatus(0);
         // 自己在自己的博客中添加评论或者自己回复自己的评论不需要进行消息通知
         if (!message.getNotifier().equals(message.getReceiver())) {
