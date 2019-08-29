@@ -31,31 +31,6 @@ public class IndexController {
     @GetMapping
     public String index(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "5") Integer size, HttpServletRequest request) {
-        // 用户文章总数和标签总数
-        // 文章总数
-        int articlesCount;
-        // 标签总数
-        int tagsCount;
-        User user = (User) request.getSession().getAttribute("user");
-        if (user != null) {
-            // 查询用户的所有文章
-            List<Article> allArticlesByUser = articleService.findAllByUser(user.getUsername());
-            if (allArticlesByUser != null) {
-                articlesCount = allArticlesByUser.size();
-            } else {
-                articlesCount = 0;
-            }
-            request.getSession().setAttribute("articlesCount", articlesCount);
-            // 查询用户的所有标签
-            Set<String> allTag = tagService.allTag(user);
-            if (allTag != null) {
-                tagsCount = allTag.size();
-            } else {
-                tagsCount = 0;
-            }
-            request.getSession().setAttribute("tagsCount", tagsCount);
-        }
-
         // 所有文章
         PaginationDTO paginationDTO = articleService.list(page, size, "");
         model.addAttribute("paginationDTO", paginationDTO);

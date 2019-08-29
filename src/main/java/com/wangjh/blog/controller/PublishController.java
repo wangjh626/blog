@@ -23,11 +23,10 @@ public class PublishController {
 
     /**
      * 跳转到发布博客页面
-     * @param request
      * @return
      */
     @GetMapping("/publish")
-    public String publishPage(HttpServletRequest request) {
+    public String publishPage() {
         return "publish";
     }
 

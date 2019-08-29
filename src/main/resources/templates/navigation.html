@@ -120,7 +120,7 @@
                 </span>
                 <div class="am-dropdown" data-am-dropdown th:if="${session.user != null}">
                     <a href="/message" class="am-btn am-btn-link am-topbar-btn am-btn-sm" style="color:
-                        #666666;font-size:16px;margin-top: 3px;" target="_blank">消息<span
+                        #666666;font-size:16px;margin-top: 3px;">消息<span
                             class="am-badge am-badge-danger" th:if="${session.messageCount!=0}"
                             th:text="${session.messageCount}"></span>
                     </a>
@@ -129,7 +129,7 @@
                         <span class="am-icon-caret-down"></span>
                     </button>
                     <ul class="am-dropdown-content">
-                        <li><a href="/admin">个人中心</a></li>
+                        <li><a href="/admin"  target="_blank">个人中心</a></li>
                         <li class="am-divider"></li>
                         <li><a href="/logout">退出登录</a></li>
                     </ul>

@@ -1,7 +1,10 @@
 package com.wangjh.blog.interceptor;
 
+import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
+import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.MessageService;
+import com.wangjh.blog.service.TagService;
 import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,8 @@ import org.thymeleaf.util.StringUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
@@ -21,6 +26,12 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private ArticleService articleService;
+
+    @Autowired
+    private TagService tagService;
 
     /**
      * 实现用户登录状态持久化
@@ -45,10 +56,32 @@ public class SessionInterceptor implements HandlerInterceptor {
                         userService.logout(response, request);
                     } else {
                         request.getSession().setAttribute("user", user);
+                        // 用户的文章总数和标签总数
+                        // 文章总数
+                        int articlesCount;
+                        // 标签总数
+                        int tagsCount;
+                        // 查询用户的所有文章
+                        List<Article> allArticlesByUser = articleService.findAllByUser(user.getUsername());
+                        if (allArticlesByUser != null) {
+                            articlesCount = allArticlesByUser.size();
+                        } else {
+                            articlesCount = 0;
+                        }
+                        request.getSession().setAttribute("articlesCount", articlesCount);
+                        // 查询用户的所有标签
+                        Set<String> allTag = tagService.allTag(user);
+                        if (allTag != null) {
+                            tagsCount = allTag.size();
+                        } else {
+                            tagsCount = 0;
+                        }
+                        request.getSession().setAttribute("tagsCount", tagsCount);
+
+                        // 消息未读数
+                        int messageCount = messageService.messageCount(user.getId());
+                        request.getSession().setAttribute("messageCount", messageCount);
                     }
-                    // 消息未读数
-                    int messageCount = messageService.messageCount(user.getId());
-                    request.getSession().setAttribute("messageCount", messageCount);
                     break;
                 }
             }

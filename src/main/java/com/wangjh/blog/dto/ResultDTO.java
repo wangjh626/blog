@@ -37,10 +37,18 @@ public class ResultDTO<T> {
      * 用户没有登录时不能点赞
      * @return
      */
-    public static ResultDTO errorOf() {
+    public static ResultDTO errorOf(Integer code) {
         ResultDTO resultDTO = new ResultDTO();
-        resultDTO.setCode(201);
-        resultDTO.setMessage("未登录，无法点赞");
+        resultDTO.setCode(code);
+        if (code == 201) {
+            resultDTO.setMessage("未登录，无法点赞");
+        }
+        if (code == 202) {
+            resultDTO.setMessage("不能给自己的博客点赞");
+        }
+        if (code == 203) {
+            resultDTO.setMessage("您已经点过赞了哟~");
+        }
         return resultDTO;
     }
 }

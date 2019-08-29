@@ -4,11 +4,10 @@ import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.ResultDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.Comment;
-import com.wangjh.blog.entity.Message;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.CommentMapper;
-import com.wangjh.blog.mapper.MessageMapper;
 import com.wangjh.blog.service.ArticleService;
+import com.wangjh.blog.service.MessageService;
 import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,7 +30,7 @@ public class CommentController {
     private UserService userService;
 
     @Autowired
-    private MessageMapper messageMapper;
+    private MessageService messageService;
 
     /**
      * 添加评论
@@ -70,7 +69,8 @@ public class CommentController {
         // 评论内容
         comment.setCommentContent(commentDTO.getCommentContent());
         commentMapper.insert(comment);
-        addMessage(comment, article, commentor, respondent);
+        // 添加消息通知
+        messageService.addMessage(comment, article, commentor, respondent);
 
         return ResultDTO.successOf();
     }
@@ -118,38 +118,9 @@ public class CommentController {
         // 评论内容
         comment.setCommentContent(commentDTO.getCommentContent());
         commentMapper.insert(comment);
-
-        addMessage(comment, article, commentor, respondent);
+        // 添加消息通知
+        messageService.addMessage(comment, article, commentor, respondent);
 
         return ResultDTO.successOf();
-    }
-
-    /**
-     * 添加消息
-     * @param comment
-     * @param article
-     * @param notifier
-     * @param receiver
-     */
-    private void addMessage(Comment comment, Article article, User notifier, User receiver) {
-        // 消息通知（如果评论或者回复自己的博客则不需要通知）
-        Message message = new Message();
-        message.setNotifier(notifier.getId());
-        message.setNotifierName(notifier.getUsername());
-        message.setOuterId(article.getId());
-        message.setOuterTitle(article.getArticleTitle());
-        if (comment.getParentId() == null) {
-            message.setReceiver(receiver.getId());
-            message.setType(0);
-        } else {
-            message.setReceiver(comment.getRespondentId());
-            message.setType(1);
-        }
-        message.setGmtCreate(comment.getCommentDate());
-        message.setStatus(0);
-        // 自己在自己的博客中添加评论或者自己回复自己的评论不需要进行消息通知
-        if (!message.getNotifier().equals(message.getReceiver())) {
-            messageMapper.insert(message);
-        }
     }
 }
