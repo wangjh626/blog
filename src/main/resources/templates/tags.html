@@ -11,8 +11,7 @@
 <body>
 <div th:insert="~{navigation::navition}"></div>
 <div th:insert="~{navigation::userCard}"></div>
-<div class="am-g am-g-fixed blog-g-fixed col-lg-4" style="text-align: center;margin: 0 auto">
-    <div th:if="${paginationDTO==null}">
+<div class="am-g am-g-fixed blog-g-fixed col-lg-4" style="text-align: center;margin: 0 auto" th:if="${paginationDTO==null}">
         <div class="am-fl" style="font-weight: bolder">Tags</div>
         <div style="margin: 100px">目前共计
             <span th:text="${tags.size()}"></span>
@@ -25,10 +24,9 @@
         </i>
     </span>
         <hr class="am-article-divider blog-hr">
-    </div>
 </div>
-<div class="am-g am-g-fixed blog-g-fixed">
-    <div class="col-md-6" style="margin-left: 304px" th:if="${paginationDTO!=null}">
+<div class="am-g am-g-fixed blog-g-fixed" th:if="${paginationDTO!=null}">
+    <div class="col-md-6" style="margin-left: 304px;margin-top: 30px">
         <div class="am-panel am-panel-default" th:each="article:${paginationDTO.getData()}">
             <div class="am-panel-bd" style="padding: 5px;box-shadow: 5px 5px 5px #888888;">
                 <article class="" >

@@ -20,6 +20,12 @@ public class MessageController {
     @Autowired
     private MessageMapper messageMapper;
 
+    /**
+     * 获取一个用户的所有消息通知
+     * @param model
+     * @param request
+     * @return
+     */
     @GetMapping("/message")
     public String message(Model model, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -30,8 +36,13 @@ public class MessageController {
         return "message";
     }
 
+    /**
+     * 将消息设置为已读
+     * @param messageId
+     * @return
+     */
     @PutMapping("/message/{messageId}")
-    public String changeStatus(@PathVariable(name = "messageId") Long messageId, HttpServletRequest request) {
+    public String changeStatus(@PathVariable(name = "messageId") Long messageId) {
         Message message = messageMapper.selectByPrimaryKey(messageId);
         message.setStatus(1);
         messageMapper.updateByPrimaryKey(message);

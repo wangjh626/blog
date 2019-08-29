@@ -109,4 +109,20 @@ public class CommentService {
         commentExample.createCriteria().andArticleIdEqualTo(articleId);
         commentMapper.deleteByExample(commentExample);
     }
+
+    /**
+     * 查看一个用户的点赞
+     * @param articleId
+     * @param userId
+     * @return
+     */
+    public Comment findLike(Long articleId, Long userId) {
+        CommentExample commentExample = new CommentExample();
+        commentExample.createCriteria().andRespondentIdIsNull().andArticleIdEqualTo(articleId).andAnswererIdEqualTo(userId);
+        List<Comment> comments = commentMapper.selectByExample(commentExample);
+        if (comments == null || comments.size() == 0) {
+            return null;
+        }
+        return commentMapper.selectByExample(commentExample).get(0);
+    }
 }

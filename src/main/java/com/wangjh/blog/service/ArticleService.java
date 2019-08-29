@@ -2,11 +2,9 @@ package com.wangjh.blog.service;
 
 
 import com.wangjh.blog.dto.CategoryDTO;
-import com.wangjh.blog.dto.CommentDTO;
 import com.wangjh.blog.dto.PaginationDTO;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.ArticleExample;
-import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.ArticleMapper;
 import org.apache.ibatis.session.RowBounds;
@@ -15,17 +13,12 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
-
-    @Autowired
-    private CommentService commentService;
 
     /**
      * 添加文章或者更新文章时设置文章的属性

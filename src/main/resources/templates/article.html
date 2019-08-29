@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="col-md-12" style="padding: 0;">
-            <article class="am-comment" th:each="comment:${comments}"> <!-- 评论容器 -->
+            <article class="am-comment" th:each="comment:${comments}" th:if="${comment.getRespondentId()!=null}"> <!-- 评论容器 -->
                 <a href="">
                     <img class="am-comment-avatar"
                          th:src="${comment.getUser().getAvatarImgUrl()!=null?comment.getUser().getAvatarImgUrl():'/images/avatar.png'}"/> <!--

@@ -7,6 +7,7 @@ import com.wangjh.blog.entity.Comment;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.CommentMapper;
 import com.wangjh.blog.service.ArticleService;
+import com.wangjh.blog.service.CommentService;
 import com.wangjh.blog.service.MessageService;
 import com.wangjh.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class CommentController {
     private CommentMapper commentMapper;
 
     @Autowired
+    private CommentService commentService;
+
+    @Autowired
     private ArticleService articleService;
 
     @Autowired
@@ -34,6 +38,7 @@ public class CommentController {
 
     /**
      * 添加评论
+     *
      * @param commentDTO
      * @param request
      * @return
@@ -77,6 +82,7 @@ public class CommentController {
 
     /**
      * 添加回复
+     *
      * @param commentDTO
      * @param request
      * @return
@@ -121,6 +127,49 @@ public class CommentController {
         // 添加消息通知
         messageService.addMessage(comment, article, commentor, respondent);
 
+        return ResultDTO.successOf();
+    }
+
+    /**
+     * 文章点赞
+     *
+     * @param commentDTO
+     * @return
+     */
+    @PostMapping("/like")
+    @ResponseBody
+    public Object like(@RequestBody CommentDTO commentDTO, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        // 如果未登录则无法点赞
+        if (user == null) {
+            return ResultDTO.errorOf(201);
+        }
+        // 查询被点赞文章
+        Article article = articleService.findById(commentDTO.getArticleId());
+        // 文章作者不能给自己的文章点赞
+        if (article.getAuthor().equals(user.getUsername())) {
+            return ResultDTO.errorOf(202);
+        }
+        // 同一用户只能点赞一次
+        Comment dbLike = commentService.findLike(article.getId(), user.getId());
+        if (dbLike != null) {
+            return ResultDTO.errorOf(203);
+        }
+        // 文章 likes 数量加一
+        article.setLikes(article.getLikes() + 1);
+        // 更新文章
+        articleService.update(article);
+        // 通知文章作者
+        Comment like = new Comment();
+        like.setArticleId(article.getId());
+        like.setOriginalAuthor(article.getAuthor());
+        like.setAnswererId(user.getId());
+        like.setAnswererUsername(user.getUsername());
+        like.setCommentDate(System.currentTimeMillis());
+        like.setLikes(0);
+        like.setCommentContent("点赞");
+        commentMapper.insert(like);
+        messageService.addMessage(like, article, user, article.getAuthor());
         return ResultDTO.successOf();
     }
 }
