@@ -6,8 +6,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wangjh.blog.entity.Article;
+import com.wangjh.blog.entity.ArticleExample;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.entity.UserExample;
+import com.wangjh.blog.mapper.ArticleMapper;
 import com.wangjh.blog.mapper.UserMapper;
 import com.wangjh.blog.service.ArticleService;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -17,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -31,8 +34,22 @@ public class BlogApplicationTests {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private ArticleMapper articleMapper;
+
+    @Autowired
+    private RedisTemplate<String, Object> objectRedisTemplate;
+
     @Test
     public void contextLoads() {
+    }
+
+    @Test
+    public void testRedis() {
+        ArticleExample articleExample = new ArticleExample();
+        articleExample.createCriteria().andIdIsNotNull();
+        List<Article> articles = articleMapper.selectByExample(articleExample);
+        objectRedisTemplate.opsForValue().set("articles", articles);
     }
 
     @Test

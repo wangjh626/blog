@@ -3,6 +3,7 @@ package com.wangjh.blog.controller;
 import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
+import com.wangjh.blog.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,9 @@ public class PublishController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 跳转到发布博客页面
@@ -76,6 +80,7 @@ public class PublishController {
         }
         // 跳转回首页
         modelAndView.setViewName("redirect:/");
+        redisUtil.deleteObject("paginationDTO");
         return modelAndView;
     }
 

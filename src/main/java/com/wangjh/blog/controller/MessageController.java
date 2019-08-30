@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wangjh.blog.entity.Message;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.MessageMapper;
+import com.wangjh.blog.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +21,12 @@ public class MessageController {
     @Autowired
     private MessageMapper messageMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     /**
      * 获取一个用户的所有消息通知
+     *
      * @param model
      * @param request
      * @return
@@ -38,6 +43,7 @@ public class MessageController {
 
     /**
      * 将消息设置为已读
+     *
      * @param messageId
      * @return
      */

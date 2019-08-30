@@ -6,6 +6,7 @@ import com.wangjh.blog.entity.ArticleExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.cache.annotation.CachePut;
 
 public interface ArticleMapper extends BaseMapper<Article> {
     /**

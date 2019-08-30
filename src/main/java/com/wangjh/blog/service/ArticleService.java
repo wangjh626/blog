@@ -7,8 +7,12 @@ import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.ArticleExample;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.mapper.ArticleMapper;
+import com.wangjh.blog.util.RedisUtil;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
@@ -19,6 +23,9 @@ public class ArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 添加文章或者更新文章时设置文章的属性
