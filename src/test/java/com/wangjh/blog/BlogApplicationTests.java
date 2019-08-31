@@ -12,6 +12,7 @@ import com.wangjh.blog.entity.UserExample;
 import com.wangjh.blog.mapper.ArticleMapper;
 import com.wangjh.blog.mapper.UserMapper;
 import com.wangjh.blog.service.ArticleService;
+import com.wangjh.blog.util.RedisUtil;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,12 +20,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.query.SortQuery;
+import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @RunWith(SpringRunner.class)
@@ -40,16 +45,16 @@ public class BlogApplicationTests {
     @Autowired
     private RedisTemplate<String, Object> objectRedisTemplate;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Test
     public void contextLoads() {
     }
 
     @Test
     public void testRedis() {
-        ArticleExample articleExample = new ArticleExample();
-        articleExample.createCriteria().andIdIsNotNull();
-        List<Article> articles = articleMapper.selectByExample(articleExample);
-        objectRedisTemplate.opsForValue().set("articles", articles);
+
     }
 
     @Test

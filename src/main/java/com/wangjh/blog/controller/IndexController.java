@@ -32,22 +32,17 @@ public class IndexController {
                         @RequestParam(name = "size", defaultValue = "5") Integer size) {
 
         // 所有文章
-        PaginationDTO redisPaginationDTO = (PaginationDTO) redisUtil.getObject("paginationDTO");
-        if (redisPaginationDTO == null) {
-            PaginationDTO paginationDTO = articleService.list(page, size, "");
-            redisUtil.setObject("paginationDTO", paginationDTO, 2L, TimeUnit.HOURS);
-            model.addAttribute("paginationDTO", paginationDTO);
-        } else {
-            model.addAttribute("paginationDTO", redisPaginationDTO);
-        }
+        PaginationDTO paginationDTO = articleService.list(page, size, "");
+        model.addAttribute("paginationDTO", paginationDTO);
+
         TagDTO tagDTO = new TagDTO();
         model.addAttribute("tagDTO", tagDTO);
 
         // 热门文章，根据文章评论数排序
-        List<Article> redisHotArticles = (List<Article>) redisUtil.getObject("hotArticles");
-        if (redisHotArticles == null) {
+        List<Article> redisHotArticles = redisUtil.getListObjectOrderBy("hotArticles", "comments", 0L, 5L);
+        if (redisHotArticles.isEmpty()) {
             List<Article> hotArticles = articleService.hotArticles();
-            redisUtil.setObject("hotArticles", hotArticles, 2L, TimeUnit.HOURS);
+            redisUtil.setListObject("hotArticles", hotArticles, 2L, TimeUnit.HOURS);
             model.addAttribute("hotArticles", hotArticles);
         } else {
             model.addAttribute("hotArticles", redisHotArticles);

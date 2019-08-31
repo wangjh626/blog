@@ -6,6 +6,7 @@ import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
 import com.wangjh.blog.service.MessageService;
+import com.wangjh.blog.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,9 @@ public class ArticleController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     /**
      * 获取一篇博客下的所有评论，以及评论底下的回复
      *
@@ -40,24 +44,27 @@ public class ArticleController {
     @GetMapping("/article/{id}")
     public String artilce(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // 根据博客 id 获取某一篇博客
-        Article article = articleService.findById(id);
-        model.addAttribute("article", article);
+        Article redisArticle = redisUtil.getOneObjectFromList("allArticles", id);
+        if (redisArticle == null) {
+            Article article = articleService.findById(id);
+            model.addAttribute("article", article);
+            System.out.println("article 数据库");
+        } else {
+            model.addAttribute("article", redisArticle);
+            System.out.println("article 缓存");
+        }
         // 获取某篇博客下的所有评论
         List<CommentDTO> comments = commentService.listComments(id);
         model.addAttribute("comments", comments);
         // 获取评论下的所有回复
         List<CommentDTO> replies = commentService.listReplies(id);
         model.addAttribute("replies", replies);
-        User user = (User) request.getSession().getAttribute("user");
-        if (user != null) {
-            int messageCount = messageService.messageCount(user.getId());
-            request.getSession().setAttribute("messageCount", messageCount);
-        }
         return "article";
     }
 
     /**
      * 导航栏 --- 分类
+     *
      * @param page
      * @param size
      * @param model
@@ -79,6 +86,7 @@ public class ArticleController {
             CategoryDTO categoryDTO = categories.get((Integer) id);
             category = categoryDTO.getName();
         }
+        System.out.println(category);
         // 所有文章进行分页
         PaginationDTO paginationDTO;
         if (StringUtils.isEmpty(category)) {
@@ -95,6 +103,7 @@ public class ArticleController {
 
     /**
      * 导航栏 --- 分类（根据分类展示博客文章）
+     *
      * @param id
      * @param request
      * @param page

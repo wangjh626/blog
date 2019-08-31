@@ -11,9 +11,9 @@
 <div th:insert="~{navigation::navition}"></div>
 <div th:insert="~{navigation::userCard}"></div>
 <div class="am-g am-g-fixed blog-g-fixed">
-    <div class="col-md-3 blog-sidebar">
+    <div class="col-md-3 blog-sidebar" style="margin-top: 20px">
         <div th:each="category:${categories}">
-            <div style="margin-top: 6px;padding: 3px;">
+            <div style="margin-top: 10px;padding: 3px;">
                 <span>
                     <a th:text="${category.getName()}" th:href="${'/categories/'+category.getId()}" style="padding-bottom:
                     2px;color: #616161;border-bottom: 1px solid #999;margin-left: 155px"></a>
@@ -22,7 +22,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6" style="margin-right: 295px">
+    <div class="col-md-6" style="margin-right: 295px;margin-top: 30px">
         <div class="am-panel am-panel-default" th:each="article:${paginationDTO.getData()}">
             <div class="am-panel-bd" style="padding: 5px;box-shadow: 5px 5px 5px #888888;">
                 <article class="" >

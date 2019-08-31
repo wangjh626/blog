@@ -80,7 +80,7 @@ public class PublishController {
         }
         // 跳转回首页
         modelAndView.setViewName("redirect:/");
-        redisUtil.deleteObject("paginationDTO");
+        redisUtil.deleteObject("articleList");
         return modelAndView;
     }
 

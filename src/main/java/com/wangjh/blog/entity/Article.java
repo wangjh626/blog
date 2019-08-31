@@ -1,7 +1,10 @@
 package com.wangjh.blog.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class Article implements Serializable {
     /**
      *

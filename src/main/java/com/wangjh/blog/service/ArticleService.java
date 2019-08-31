@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ArticleService {
@@ -146,13 +147,24 @@ public class ArticleService {
         Integer totalPage;
 
         // 获取所有文章
-        ArticleExample articleExample = new ArticleExample();
-        if (StringUtils.isEmpty(category)) {
+        List<Article> redisAllArticles = redisUtil.getAllArticlesOrderBy("");
+        if (redisAllArticles.isEmpty()) {
+            ArticleExample articleExample = new ArticleExample();
             articleExample.createCriteria().andIdIsNotNull();
+            articleExample.setOrderByClause("publish_date desc");
+            articles = articleMapper.selectByExample(articleExample);
+            redisUtil.setListObject("allArticles", articles, 2L, TimeUnit.HOURS);
         } else {
-            articleExample.createCriteria().andArticleCategoriesEqualTo(category);
+            if (StringUtils.isEmpty(category)) {
+                articles = new ArrayList<>(redisAllArticles);
+            } else {
+                for (Article article : redisAllArticles) {
+                    if (StringUtils.equals(article.getArticleCategories(), category)) {
+                        articles.add(article);
+                    }
+                }
+            }
         }
-        articles = articleMapper.selectByExample(articleExample);
 
         // 根据文章总数计算总页数
         totalPage = totalPage(size, articles.size());
@@ -164,17 +176,22 @@ public class ArticleService {
         paginationDTO.setPagination(totalPage, page);
         // 将所有文章按时间倒序排序
         List<Article> articleList;
-        if (StringUtils.isEmpty(category)) {
-            ArticleExample example = new ArticleExample();
-            example.createCriteria().andIdIsNotNull();
-            example.setOrderByClause("publish_date desc");
-            // 得到某一页的文章
-            articleList = articleMapper.selectByExampleWithRowbounds(example, new RowBounds((page - 1) * size,
-                    size));
+        if (redisAllArticles.isEmpty()) {
+            articleList = articles.subList((page - 1) * size, page * size);
         } else {
-            articleExample.setOrderByClause("publish_date desc");
-            articleList = articleMapper.selectByExampleWithRowbounds(articleExample, new RowBounds((page - 1) * size,
-                    size));
+            if (StringUtils.isEmpty(category)) {
+                if (redisAllArticles.size() < page * size) {
+                    articleList = redisAllArticles.subList((page - 1) * size, redisAllArticles.size());
+                } else {
+                    articleList = redisAllArticles.subList((page - 1) * size, page * size);
+                }
+            } else {
+                if (articles.size() < page * size) {
+                    articleList = articles.subList((page - 1) * size, articles.size());
+                } else {
+                    articleList = articles.subList((page - 1) * size, page * size);
+                }
+            }
         }
         for (Article article : articleList) {
             String[] strings = article.getArticleTags().split(",");
@@ -415,6 +432,7 @@ public class ArticleService {
 
     /**
      * 在博客首页展示 5 篇热门文章（根据评论数排序）
+     *
      * @return
      */
     public List<Article> hotArticles() {
@@ -426,6 +444,7 @@ public class ArticleService {
 
     /**
      * 文章添加评论数
+     *
      * @param articleId
      */
     public void addCommentCount(Long articleId) {
@@ -436,6 +455,7 @@ public class ArticleService {
 
     /**
      * 文章更新
+     *
      * @param article
      */
     public void update(Article article) {
