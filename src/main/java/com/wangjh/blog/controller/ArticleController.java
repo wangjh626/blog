@@ -29,9 +29,6 @@ public class ArticleController {
     private CommentService commentService;
 
     @Autowired
-    private MessageService messageService;
-
-    @Autowired
     private RedisUtil redisUtil;
 
     /**
@@ -42,16 +39,14 @@ public class ArticleController {
      * @return
      */
     @GetMapping("/article/{id}")
-    public String artilce(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
+    public String artilce(@PathVariable("id") Long id, Model model) {
         // 根据博客 id 获取某一篇博客
         Article redisArticle = redisUtil.getOneObjectFromList("allArticles", id);
         if (redisArticle == null) {
             Article article = articleService.findById(id);
             model.addAttribute("article", article);
-            System.out.println("article 数据库");
         } else {
             model.addAttribute("article", redisArticle);
-            System.out.println("article 缓存");
         }
         // 获取某篇博客下的所有评论
         List<CommentDTO> comments = commentService.listComments(id);
@@ -86,7 +81,6 @@ public class ArticleController {
             CategoryDTO categoryDTO = categories.get((Integer) id);
             category = categoryDTO.getName();
         }
-        System.out.println(category);
         // 所有文章进行分页
         PaginationDTO paginationDTO;
         if (StringUtils.isEmpty(category)) {

@@ -80,7 +80,8 @@ public class PublishController {
         }
         // 跳转回首页
         modelAndView.setViewName("redirect:/");
-        redisUtil.deleteObject("articleList");
+        // 删除 allArticles 缓存
+        redisUtil.deleteObject("allArticles");
         return modelAndView;
     }
 
@@ -123,6 +124,8 @@ public class PublishController {
             return modelAndView;
         }
         modelAndView.setViewName("redirect:/admin/articleTable");
+        // 删除 allArticles 缓存
+        redisUtil.deleteObject("allArticles");
         return modelAndView;
     }
 }

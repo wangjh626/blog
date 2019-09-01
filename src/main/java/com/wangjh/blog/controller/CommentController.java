@@ -10,6 +10,7 @@ import com.wangjh.blog.service.ArticleService;
 import com.wangjh.blog.service.CommentService;
 import com.wangjh.blog.service.MessageService;
 import com.wangjh.blog.service.UserService;
+import com.wangjh.blog.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,9 @@ public class CommentController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 添加评论
@@ -76,7 +80,9 @@ public class CommentController {
         commentMapper.insert(comment);
         // 添加消息通知
         messageService.addMessage(comment, article, commentor, respondent);
-
+        // 删除缓存 allArticles 和 messages
+        redisUtil.deleteObject("allArticles");
+        redisUtil.deleteObject("messages");
         return ResultDTO.successOf();
     }
 
@@ -126,7 +132,9 @@ public class CommentController {
         commentMapper.insert(comment);
         // 添加消息通知
         messageService.addMessage(comment, article, commentor, respondent);
-
+        // 删除缓存 allArticles 和 messages
+        redisUtil.deleteObject("allArticles");
+        redisUtil.deleteObject("messages");
         return ResultDTO.successOf();
     }
 
@@ -170,6 +178,9 @@ public class CommentController {
         like.setCommentContent("点赞");
         commentMapper.insert(like);
         messageService.addMessage(like, article, user, article.getAuthor());
+        // 删除缓存 allArticles 和 messages
+        redisUtil.deleteObject("allArticles");
+        redisUtil.deleteObject("messages");
         return ResultDTO.successOf();
     }
 }

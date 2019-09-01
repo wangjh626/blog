@@ -147,7 +147,7 @@ public class ArticleService {
         Integer totalPage;
 
         // 获取所有文章
-        List<Article> redisAllArticles = redisUtil.getAllArticlesOrderBy("");
+        List<Article> redisAllArticles = redisUtil.getListObject("allArticles");
         if (redisAllArticles.isEmpty()) {
             ArticleExample articleExample = new ArticleExample();
             articleExample.createCriteria().andIdIsNotNull();

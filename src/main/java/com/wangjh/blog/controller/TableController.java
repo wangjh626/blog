@@ -1,8 +1,10 @@
 package com.wangjh.blog.controller;
 
 import com.wangjh.blog.dto.PaginationDTO;
+import com.wangjh.blog.entity.Article;
 import com.wangjh.blog.entity.User;
 import com.wangjh.blog.service.ArticleService;
+import com.wangjh.blog.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,9 @@ public class TableController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 在控制台显示某个用户的所有文章
@@ -37,7 +42,7 @@ public class TableController {
             model.addAttribute("articles", articles);
             return "article-table";
         } else {
-            // 如果该用户没有写过博
+            // 如果该用户没有写过博客
             return "admin-404";
         }
     }

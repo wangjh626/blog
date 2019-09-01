@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Controller
@@ -38,19 +40,37 @@ public class MessageController {
      */
     @GetMapping("/message")
     public String message(Model model, HttpServletRequest request) {
+        // 从 Session 中获取用户
         User user = (User) request.getSession().getAttribute("user");
-        Long messages1 = redisTemplate.opsForList().size("messages");
-        System.out.println(messages1);
-        List redisMessages = redisUtil.getListObjectOrderBy("messages", "gmtCreate", 0L,
-                redisTemplate.opsForList().size("messages"));
+        // 按时间倒序从 redis 中获取所有 Message
+        List<Message> redisMessages = redisUtil.getMessageListOrder("messages", "gmtCreate", 0,
+                Objects.requireNonNull(redisTemplate.opsForList().size("messages")).intValue());
         if (redisMessages.isEmpty()) {
+            // 如果 redis 中没有消息的缓存，则从数据库中获取所有消息
             QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("receiver", user.getId()).orderByDesc("gmt_create");
-            List<Message> messages = messageMapper.selectList(queryWrapper);
-            redisUtil.setListObject("messages", messages, 2L, TimeUnit.HOURS);
+            queryWrapper.isNotNull("id").orderByDesc("gmt_create");
+            List<Message> messageList = messageMapper.selectList(queryWrapper);
+            // 如果用户 id 和消息接收者的 id 相同，则存入 messages 中
+            List<Message> messages = new ArrayList<>();
+            for (Message message : messageList) {
+                if (Objects.equals(message.getReceiver(), user.getId())) {
+                    messages.add(message);
+                }
+            }
+            // 将所有消息添加至 redis 的 messages 缓存中
+            redisUtil.setListObject("messages", messageList, 2L, TimeUnit.HOURS);
+            // 将用户消息传给前端页面
             model.addAttribute("messages", messages);
         } else {
-            model.addAttribute("messages", redisMessages);
+            // 如果 redis 缓存中存在 messages 缓存，则取出该用户的所有消息
+            List<Message> messages = new ArrayList<>();
+            for (Message message : redisMessages) {
+                if (Objects.equals(message.getReceiver(), user.getId())) {
+                    messages.add(message);
+                }
+            }
+            // 将该用户的缓存消息传给前端页面
+            model.addAttribute("messages", messages);
         }
         return "message";
     }
@@ -63,9 +83,13 @@ public class MessageController {
      */
     @PutMapping("/message/{messageId}")
     public String changeStatus(@PathVariable(name = "messageId") Long messageId) {
+        // 先删除消息缓存
         redisUtil.deleteObject("messages");
+        // 根据消息 id 从数据库中获取消息
         Message message = messageMapper.selectByPrimaryKey(messageId);
+        // 将消息的状态设为 1，表示已经读取
         message.setStatus(1);
+        // 跟新该消息
         messageMapper.updateByPrimaryKey(message);
         return "redirect:/article/" + message.getOuterId();
     }

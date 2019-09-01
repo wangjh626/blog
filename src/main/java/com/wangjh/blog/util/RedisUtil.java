@@ -1,12 +1,11 @@
 package com.wangjh.blog.util;
 
 import com.wangjh.blog.entity.Article;
+import com.wangjh.blog.entity.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.SortParameters;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.query.SortQuery;
-import org.springframework.data.redis.core.query.SortQueryBuilder;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -64,31 +63,60 @@ public class RedisUtil {
     }
 
     /**
-     * 获取缓存中的所有文章，并按照 orderBy 进行排序
-     * @param orderBy
+     * 根据 key 从缓存中获取一个 list
+     * @param key
      * @return
      */
-    public List<Article> getAllArticlesOrderBy(String orderBy) {
-        List listObjectOrderBy = getListObjectOrderBy("allArticles", orderBy, 0L, redisTemplate.opsForList().size("allArticles"));
-        List<Article> articleList = new ArrayList<>();
-        for (Object o : listObjectOrderBy) {
-            articleList.add((Article) o);
+    public <T> List<T> getListObject(String key) {
+        // 根据 key 从缓存中获取 list 的大小
+        Long size = redisTemplate.opsForList().size(key);
+        if (size != null) {
+            // 如果 list 的大小不是 0，则返回该缓存
+            return (List<T>) redisTemplate.opsForList().range(key, 0, size);
+        } else {
+            // 否则返回 null
+            return null;
         }
-        return articleList;
     }
 
     /**
-     * 在缓存中取出一个 list 对象，并按照 orderBy 倒序排列
+     * 根据 orderBy 对文章缓存进行排序，并获取缓存
      * @param key
      * @param orderBy
      * @param start
      * @param end
      * @return
      */
-    public List getListObjectOrderBy(String key, String orderBy, Long start, Long end) {
-        SortQuery<String> query =
-                SortQueryBuilder.sort(key).by(orderBy).order(SortParameters.Order.ASC).limit(start, end).build();
-        return redisTemplate.sort(query);
+    public List<Article> getArticleListOrder(String key, String orderBy, int start, int end) {
+        String comments = "comments";
+        String publishDate = "publishDate";
+        List<Object> list = getListObject(key);
+        List<Article> articles = new ArrayList<>();
+        for (Object o : list) {
+            articles.add((Article) o);
+        }
+        if (StringUtils.equals(orderBy, comments)) {
+            articles.sort((o1, o2) -> o2.getComments().compareTo(o1.getComments()));
+        } else if (StringUtils.equals(orderBy, publishDate)) {
+            articles.sort((o1, o2) -> o2.getPublishDate().compareTo(o1.getPublishDate()));
+        }
+        return articles.subList(start, end);
+    }
+
+    /**
+     * 根据 orderBy 对消息缓存进行排序，并获取缓存
+     * @param key
+     * @param orderBy
+     * @param start
+     * @param end
+     * @return
+     */
+    public List<Message> getMessageListOrder(String key, String orderBy, int start, int end) {
+        // 根军 key 从缓存中获取消息的 list
+        List<Message> messages = getListObject(key);
+        // 将消息按照时间倒序排列
+        messages.sort((o1, o2) -> o2.getGmtCreate().compareTo(o1.getGmtCreate()));
+        return messages.subList(start, end);
     }
 
     /**
@@ -119,7 +147,6 @@ public class RedisUtil {
     public Article getOneObjectFromList(String key, Long id) {
         Long size = redisTemplate.opsForList().size(key);
         if (size != null) {
-            System.out.println(size);
             List<Object> list = redisTemplate.opsForList().range(key, 0, size);
             if (list != null) {
                 for (Object value : list) {
