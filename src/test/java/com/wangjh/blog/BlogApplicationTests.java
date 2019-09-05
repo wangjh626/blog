@@ -54,7 +54,8 @@ public class BlogApplicationTests {
 
     @Test
     public void testRedis() {
-
+        List<Object> range = objectRedisTemplate.opsForList().range("allArticles", 0, -1);
+        range.forEach(System.out::println);
     }
 
     @Test

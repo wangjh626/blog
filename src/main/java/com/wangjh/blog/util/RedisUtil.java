@@ -64,23 +64,26 @@ public class RedisUtil {
 
     /**
      * 根据 key 从缓存中获取一个 list
+     *
      * @param key
      * @return
      */
     public <T> List<T> getListObject(String key) {
-        // 根据 key 从缓存中获取 list 的大小
-        Long size = redisTemplate.opsForList().size(key);
-        if (size != null) {
-            // 如果 list 的大小不是 0，则返回该缓存
-            return (List<T>) redisTemplate.opsForList().range(key, 0, size);
+        /*
+          根据 key 从 list 缓存中获取所有 value
+          range(key, 0, -1) ： 取出所有的 value
+         */
+        List<T> list = (List<T>) redisTemplate.opsForList().range(key, 0, -1);
+        if (list != null || list.size() != 0) {
+            return list;
         } else {
-            // 否则返回 null
             return null;
         }
     }
 
     /**
      * 根据 orderBy 对文章缓存进行排序，并获取缓存
+     *
      * @param key
      * @param orderBy
      * @param start
@@ -105,6 +108,7 @@ public class RedisUtil {
 
     /**
      * 根据 orderBy 对消息缓存进行排序，并获取缓存
+     *
      * @param key
      * @param orderBy
      * @param start
@@ -141,6 +145,7 @@ public class RedisUtil {
 
     /**
      * 从 list 缓存中获取一个对象
+     *
      * @param id
      * @return
      */

@@ -123,6 +123,8 @@ public class ArticleController {
         articleService.deleteById(articleId);
         // 删除文章的同时也要删除该文章下的所有评论
         commentService.deleteAllComments(articleId);
+        // 删除缓存
+        redisUtil.deleteObject("allArticles");
         return "redirect:/admin/articleTable";
     }
 
